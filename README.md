@@ -87,6 +87,11 @@
 * Miopen backend for Windows and Linux only supports our denoisers and upscalers
 * MPS backend only supports our denoisers
 
+### 3.3 DirectML and Directx12 interop
+* A device and command queue can be passed when creating a RML context. We support both async compute queue(D3D12_COMMAND_LIST_TYPE_COMPUTE) and the default command queue(D3D12_COMMAND_LIST_TYPE_DIRECT).
+Compute queue are preferred as it will run asynchronously with any graphics job.
+If no queue are passed, RML will create a compute queue
+
 ### 4 future
 We aim at providing the same level of feature for every back end and will provide updates monthly for that
 
