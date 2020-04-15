@@ -59,7 +59,8 @@
 * MPS backend only supports our denoisers
 
 * Model supported by the different backend
-|  | DIRECTML | MIOPEN | MPS |
+
+| --- | DIRECTML | MIOPEN | MPS |
 | ------------- | ------------- |------------- |------------- |
 | Inception V1 | yes  | No  | No |
 | Inception V2 | yes  | No  | No |
