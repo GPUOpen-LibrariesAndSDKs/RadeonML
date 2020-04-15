@@ -81,6 +81,6 @@ Others models may work as they will have similar operators, but we haven't check
 Compute queue are preferred as it will run asynchronously with any graphics job.
 If no queue are passed, RML will create a compute queue
 
-## 4future
+## 4. Future
 We aim at providing the same level of feature for every back end and will provide updates monthly for that
 
