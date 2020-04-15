@@ -60,19 +60,19 @@
 
 * Model supported by the different backend
 
-| --- | DIRECTML | MIOPEN | MPS |
+|    | DIRECTML | MIOPEN | MPS |
 | ------------- | ------------- |------------- |------------- |
-| Inception V1 | yes  | No  | No |
-| Inception V2 | yes  | No  | No |
-| MobileNet V1 | yes  | No  | No |
-| MobileNet V2 | yes  | No  | No |
-| ResNet V1 50 | yes  | No  | No |
-| ResNet V2 50 | yes  | No  | No |
-| VGG 16 | yes  | No  | No |
-| VGG 19 | yes  | No  | No |
-| UNet(denoiser) | yes  | yes  | yes |
-| ESRGAN | yes  | yes  | No |
-| RTUnet | yes  | yes  | No |
+| Inception V1 | Yes  | No  | No |
+| Inception V2 | Yes  | No  | No |
+| MobileNet V1 | Yes  | No  | No |
+| MobileNet V2 | Yes  | No  | No |
+| ResNet V1 50 | Yes  | No  | No |
+| ResNet V2 50 | Yes  | No  | No |
+| VGG 16 | Yes  | No  | No |
+| VGG 19 | Yes  | No  | No |
+| UNet(denoiser) | Yes  | Yes  | Yes |
+| ESRGAN | Yes  | Yes  | No |
+| RTUnet | Yes  | Yes  | No |
 
 Others models may work as they will have similar operators, but we haven't checked them
 
