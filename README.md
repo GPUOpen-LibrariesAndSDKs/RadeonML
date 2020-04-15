@@ -27,36 +27,7 @@
 * OSX Mojave and Catalina
 
 ### 3.1 Features supported
-* ONNX support (opset 6-10)
-* New operations for DirectML backend added:
-    * Acos
-    * Asin
-    * Atan
-    * BatchNorm
-    * Cast
-    * Ceil
-    * Clip
-    * Cos
-    * Flatten
-    * Floor
-    * Gemm
-    * LocalResponseNormalization
-    * LogSoftmax
-    * Pool2DAvgGlobal
-    * Recip
-    * Relu6
-    * Rsqrt
-    * Selu
-    * Selu
-    * Sin
-    * Softmax
-    * SpaceToDepth
-    * Sqrt
-    * Squeeze
-    * Tan
-    * Tanh
-    * ThresholdedRelu
-    * Unsqueeze
+* ONNX support (opset 6-11)
 * Graph manipulation API
     * rmlLoadGraph
     * rmlConnectGraphs
@@ -86,6 +57,23 @@
 * Windows DirectML supports our denoisers, upscalers and common models like resnet, VGG etc..
 * Miopen backend for Windows and Linux only supports our denoisers and upscalers
 * MPS backend only supports our denoisers
+
+* Model supported by the different backend
+|  | DIRECTML | MIOPEN | MPS |
+| ------------- | ------------- |------------- |------------- |
+| Inception V1 | yes  | No  | No |
+| Inception V2 | yes  | No  | No |
+| MobileNet V1 | yes  | No  | No |
+| MobileNet V2 | yes  | No  | No |
+| ResNet V1 50 | yes  | No  | No |
+| ResNet V2 50 | yes  | No  | No |
+| VGG 16 | yes  | No  | No |
+| VGG 19 | yes  | No  | No |
+| UNet(denoiser) | yes  | yes  | yes |
+| ESRGAN | yes  | yes  | No |
+| RTUnet | yes  | yes  | No |
+
+Others models may work as they will have similar operators, but we haven't checked them
 
 ### 3.3 DirectML and Directx12 interop
 * A device and command queue can be passed when creating a RML context. We support both async compute queue(D3D12_COMMAND_LIST_TYPE_COMPUTE) and the default command queue(D3D12_COMMAND_LIST_TYPE_DIRECT).
