@@ -26,14 +26,14 @@ THE SOFTWARE.
  * @brief OpenCL ineroperation API
  */
 
-#include "RadeonML.hpp"
-#include "RadeonML_cl.h"
+#include "rml/RadeonML.hpp"
+#include "rml/RadeonML_cl.h"
 
 #define RML_CHECK_STATUS(OP) ::rml::details::CheckStatus(OP == RML_OK, #OP)
 
 namespace rml {
 
-inline Context CreateContextFromClQueue(cl_command_queue queue)
+inline Context CreateContextFromClQueue(void* queue /* cl_command_queue */)
 {
     rml_context context = nullptr;
     RML_CHECK_STATUS(rmlCreateContextFromClQueue(queue, &context));
@@ -42,17 +42,12 @@ inline Context CreateContextFromClQueue(cl_command_queue queue)
 
 inline Tensor CreateTensorFromClBuffer(const Context& context,
                                        const rml_tensor_info& info,
-                                       cl_mem buffer,
+                                       void* buffer /* cl_mem */,
                                        rml_access_mode mode)
 {
     rml_tensor tensor = nullptr;
     RML_CHECK_STATUS(rmlCreateTensorFromClBuffer(context, buffer, &info, mode, &tensor));
     return Tensor(tensor);
-}
-
-inline void SetMIOpenAutoTuningOn(const Context& context, bool on)
-{
-    RML_CHECK_STATUS(rmlSetMIOpenAutoTuningOn(context, on ? RML_TRUE : RML_FALSE));
 }
 
 } // namespace rml

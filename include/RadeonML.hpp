@@ -26,8 +26,8 @@ THE SOFTWARE.
  * @brief Machine learning inference API
  */
 
-#include "RadeonML.h"
-#include "RadeonML_graph.h"
+#include "rml/RadeonML.h"
+#include "rml/RadeonML_graph.h"
 
 #include <algorithm>
 #include <cstring>
@@ -227,15 +227,20 @@ public:
         SetInputInfo(nullptr, info);
     }
 
-    template<class T>
-    void SetOutputNames(const T& names) const
+    void SetOutputNames(const std::initializer_list<const char*>& names) const
+    {
+        std::vector<const char*> c_strings(names.begin(), names.end());
+        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, c_strings.size(), c_strings.data()));
+    }
+
+    void SetOutputNames(const std::vector<std::string>& names) const
     {
         std::vector<std::string> strings(names.begin(), names.end());
         std::vector<const char*> c_strings(names.size());
         std::transform(strings.begin(), strings.end(), c_strings.begin(), [](const std::string& s) {
             return s.c_str();
         });
-        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, names.size(), c_strings.data()));
+        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, c_strings.size(), c_strings.data()));
     }
 
     rml_tensor_info GetOutputInfo(const char* name = nullptr) const
@@ -314,7 +319,7 @@ public:
         return num_inputs;
     }
 
-    void GetInputNames(std::vector<const char*>& names)
+    void GetInputNames(std::vector<const char*>& names) const
     {
         size_t num_inputs = GetNumInputs(); 
         names.resize(num_inputs);
@@ -373,7 +378,7 @@ public:
         return Graph(graph);
     }
 
-    Model CreateModel(rml_graph graph) const
+    Model CreateModel(const Graph& graph) const
     {
         rml_model model = NULL;
         RML_CHECK_STATUS(rmlCreateModelFromGraph(m_handle, graph, &model));

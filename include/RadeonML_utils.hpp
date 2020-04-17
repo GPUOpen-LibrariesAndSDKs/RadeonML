@@ -21,7 +21,12 @@ THE SOFTWARE.
 *****************************************************************************/
 #pragma once
 
-#include "RadeonML.h"
+/**
+ * @file
+ * @brief Utilities
+ */
+
+#include "rml/RadeonML.h"
 
 #include <iostream>
 #include <string>

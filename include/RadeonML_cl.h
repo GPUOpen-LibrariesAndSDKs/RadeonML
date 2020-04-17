@@ -26,13 +26,7 @@ THE SOFTWARE.
  * @brief OpenCL ineroperation API
  */
 
-#include "RadeonML.h"
-
-#if defined(__APPLE__) || defined(__MACOSX)
-#    include <OpenCL/cl.h>
-#else
-#    include <CL/cl.h>
-#endif
+#include "rml/RadeonML.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,7 +46,8 @@ extern "C" {
  * The context should be released with rmlReleaseContext().
  */
 
-RML_API_ENTRY rml_status rmlCreateContextFromClQueue(cl_command_queue queue, rml_context* context);
+RML_API_ENTRY rml_status rmlCreateContextFromClQueue(void* queue /* cl_command_queue */,
+                                                     rml_context* context);
 
 /**
  * Creates a tensor from an OpenCL buffer.
@@ -69,34 +64,14 @@ RML_API_ENTRY rml_status rmlCreateContextFromClQueue(cl_command_queue queue, rml
  *      @p info or @ p tensor is NULL or @p mode is invalid.
  *
  * To get more details in case of failure, call rmlGetLastError().
- * The context should be released with rmlReleaseTensor().
+ * The tensor should be released with rmlReleaseTensor().
  */
 
 RML_API_ENTRY rml_status rmlCreateTensorFromClBuffer(rml_context context,
-                                                     cl_mem buffer,
+                                                     void* buffer /* cl_mem */,
                                                      const rml_tensor_info* info,
                                                      rml_access_mode mode,
                                                      rml_tensor* tensor);
-
-/**
- * MIOpen can run in 2 different ways.
- * It can either search for the best convolution algorithm for a given problem size
- * or avoid that search.
- * This mechanism is called auto tuning.
- * By default it is off as it is a costly operation. But an application may want to use for
- * performance reason
- * https://github.com/ROCmSoftwarePlatform/MIOpen/blob/master/doc/src/perfdatabase.md#auto-tuning-the-kernels
- *
- * @param[in] context A valid context handle.
- * @param[in] on      A boolean indicating if the auto tuning state for MIOpen convolution is on.
- *
- * @return A valid tensor handle in case of success and status:
- * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p context is invalid.
- *
- * To get more details in case of failure, call rmlGetLastError().
- */
-RML_API_ENTRY rml_status rmlSetMIOpenAutoTuningOn(rml_context context, rml_bool on);
 
 #ifdef __cplusplus
 } // extern "C"

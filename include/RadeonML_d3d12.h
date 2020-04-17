@@ -26,10 +26,7 @@ THE SOFTWARE.
  * @brief Direct3D 12 interoperation API
  */
 
-#include "RadeonML.h"
-
-#include <d3d12.h>
-
+#include "rml/RadeonML.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +46,7 @@ extern "C" {
  * To get more details in case of failure, call rmlGetLastError().
  * The context should be released with rmlReleaseContext().
  */
-RML_API_ENTRY rml_status rmlCreateContextFromD3DQueue(ID3D12CommandQueue* command_queue,
+RML_API_ENTRY rml_status rmlCreateContextFromD3DQueue(void* command_queue, /* ID3D12CommandQueue* */
                                                       rml_context* context);
 
 /**
@@ -69,7 +66,7 @@ RML_API_ENTRY rml_status rmlCreateContextFromD3DQueue(ID3D12CommandQueue* comman
  * The context should be released with rmlReleaseTensor().
  */
 RML_API_ENTRY rml_status rmlCreateTensorFromD3DResource(rml_context context,
-                                                        ID3D12Resource* resource,
+                                                        void* resource /* ID3D12Resource* */,
                                                         const rml_tensor_info* info,
                                                         rml_tensor* tensor);
 
@@ -86,7 +83,8 @@ RML_API_ENTRY rml_status rmlCreateTensorFromD3DResource(rml_context context,
  * To get more details in case of failure, call rmlGetLastError().
  * The resulting resource is reference counted by the @p tensor.
  */
-RML_API_ENTRY rml_status rmlGetD3DResourceFromTensor(rml_tensor tensor, ID3D12Resource** resource);
+RML_API_ENTRY rml_status rmlGetD3DResourceFromTensor(rml_tensor tensor,
+                                                     void** resource /* ID3D12Resource** */);
 
 /**
  * Set command list for interop.
@@ -110,11 +108,12 @@ RML_API_ENTRY rml_status rmlGetD3DResourceFromTensor(rml_tensor tensor, ID3D12Re
  * To get more details in case of failure, call rmlGetLastError().
  */
 RML_API_ENTRY rml_status rmlSetD3DCommandList(rml_context context,
-                                              ID3D12GraphicsCommandList* command_list,
-                                              ID3D12CommandAllocator* command_allocator);
+                     void* command_list /* ID3D12GraphicsCommandList* */,
+                     void* command_allocator /* ID3D12CommandAllocator* */);
 
 /**
- * Set number of internal command lists to use for execution if interop command list is not specified.
+ * Set number of internal command lists to use for execution if interop command list is not
+ * specified.
  *
  * @param[in] context           A valid context handle.
  * @param[in] num_command_lists A number of internal command lists that will be created.
@@ -129,11 +128,11 @@ RML_API_ENTRY rml_status rmlSetNumD3DCommandLists(rml_context context,
                                                   unsigned int num_command_lists);
 
 /**
-* Copies image content.
-*
-* @param[in] src A valid source tensor handle.
-* @param[in] dst A valid destination tensor handle.
-*
+ * Copies image content.
+ *
+ * @param[in] src A valid source tensor handle.
+ * @param[in] dst A valid destination tensor handle.
+ *
  * @return Status:
  * - #RML_OK if the operation is successful,
  * - #RML_ERROR_BAD_PARAMETER if @p src or @p dst is invalid.

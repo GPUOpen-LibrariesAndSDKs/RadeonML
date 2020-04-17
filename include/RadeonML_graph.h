@@ -26,8 +26,7 @@ THE SOFTWARE.
  * @brief Graph manipulation API
  */
 
-#include "RadeonML.h"
-
+#include "rml/RadeonML.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,77 +48,752 @@ typedef struct _rml_op* rml_op;
 typedef enum _rml_op_type
 {
     RML_OP_UNSPECIFIED = 0,
-    RML_OP_ABS = 1010,                          /**< @brief rml_op_desc#abs */
-    RML_OP_ACOS = 1020,                         /**< @brief rml_op_desc#acos */
-    RML_OP_ADD = 1030,                          /**< @brief rml_op_desc#add */
-    RML_OP_ASIN = 1060,                         /**< @brief rml_op_desc#asin */
-    RML_OP_ATAN = 1070,                         /**< @brief rml_op_desc#atan */
-    RML_OP_BATCH_NORMALIZATION = 1080,          /**< @brief rml_op_desc#batch_norm */
-    RML_OP_BIAS_ADD = 1090,                     /**< @brief rml_op_desc#bias_add */
-    RML_OP_CAST = 1100,                         /**< @brief rml_op_desc#cast */
-    RML_OP_CEIL = 1110,                         /**< @brief rml_op_desc#ceil */
-    RML_OP_CLIP = 1130,                         /**< @brief rml_op_desc#clip */
-    RML_OP_CONCAT = 1140,                       /**< @brief rml_op_desc#concat */
-    RML_OP_CONST = 1150,                        /**< @brief rml_op_desc#constant */
-    RML_OP_CONV_2D = 1180,                      /**< @brief rml_op_desc#conv2d */
-    RML_OP_CONV_2D_DEPTHWISE = 1190,            /**< @brief rml_op_desc#conv2d_depthwise */
-    RML_OP_COS = 1230,                          /**< @brief rml_op_desc#cos */
-    RML_OP_DEPTH_TO_SPACE = 1240,               /**< @brief rml_op_desc#depth2space */
-    RML_OP_DIV = 1260,                          /**< @brief rml_op_desc#div */
-    RML_OP_ELU = 1280,                          /**< @brief rml_op_desc#elu */
-    RML_OP_EXP = 1290,                          /**< @brief rml_op_desc#exp */
-    RML_OP_FLATTEN = 1300,                      /**< @brief rml_op_desc#flatten */
-    RML_OP_FLOOR = 1310,                        /**< @brief rml_op_desc#floor */
-    RML_OP_GEMM = 1330,                         /**< @brief rml_op_desc#gemm */
-    RML_OP_IDENTITY = 1340,                     /**< @brief rml_op_desc#identity */
-    RML_OP_LEAKY_RELU = 1350,                   /**< @brief rml_op_desc#leaky_relu */
-    RML_OP_LOCAL_RESPONSE_NORMALIZATION = 1360, /**< @brief rml_op_desc#lrn */
-    RML_OP_LOG_SOFTMAX = 1370,                  /**< @brief rml_op_desc#log_softmax */
-    RML_OP_LOGN = 1380,                         /**< @brief rml_op_desc#logn */
-    RML_OP_MAX = 1390,                          /**< @brief rml_op_desc#max */
-    RML_OP_MEAN = 1400,                         /**< @brief rml_op_desc#mean */
-    RML_OP_MIN = 1410,                          /**< @brief rml_op_desc#min */
-    RML_OP_MUL = 1420,                          /**< @brief rml_op_desc#mul */
-    RML_OP_NEG = 1430,                          /**< @brief rml_op_desc#neg */
-    RML_OP_PARAMETRIC_RELU = 1440,              /**< @brief rml_op_desc#parametric_relu */
-    RML_OP_PLACEHOLDER = 1450,                  /**< @brief rml_op_desc#placeholder */
-    RML_OP_POOL_2D_AVG = 1490,                  /**< @brief rml_op_desc#pool2d_avg */
-    RML_OP_POOL_2D_AVG_GLOBAL = 1500,           /**< @brief rml_op_desc#pool2d_avg_global */
-    RML_OP_POOL_2D_MAX = 1510,                  /**< @brief rml_op_desc#pool2d_max */
-    RML_OP_POOL_2D_MIN = 1520,                  /**< @brief rml_op_desc#pool2d_min */
-    RML_OP_POW = 1560,                          /**< @brief rml_op_desc#pow */
-    RML_OP_RECIP = 1580,                        /**< @brief rml_op_desc#recip */
-    RML_OP_RELU = 1650,                         /**< @brief rml_op_desc#relu */
-    RML_OP_RELU6 = 1660,                        /**< @brief rml_op_desc#relu6 */
-    RML_OP_RESHAPE = 1670,                      /**< @brief rml_op_desc#reshape */
-    RML_OP_RESIZE_2D = 1680,                    /**< @brief rml_op_desc#resize2d */
-    RML_OP_RSQRT = 1730,                        /**< @brief rml_op_desc#rsqrt */
-    RML_OP_SELU = 1740,                         /**< @brief rml_op_desc#selu */
-    RML_OP_SHAPE = 1750,                        /**< @brief rml_op_desc#shape */
-    RML_OP_SIGMOID = 1760,                      /**< @brief rml_op_desc#sigmoid */
-    RML_OP_SIN = 1770,                          /**< @brief rml_op_desc#sin */
-    RML_OP_SLICE = 1780,                        /**< @brief rml_op_desc#slice */
-    RML_OP_SOFTMAX = 1790,                      /**< @brief rml_op_desc#softmax */
-    RML_OP_SOFTPLUS = 1810,                     /**< @brief rml_op_desc#softplux */
-    RML_OP_SOFTSIGN = 1820,                     /**< @brief rml_op_desc#softsign */
-    RML_OP_SPACE_TO_DEPTH = 1830,               /**< @brief rml_op_desc#space2depth */
-    RML_OP_SQRT = 1850,                         /**< @brief rml_op_desc#sqrt */
-    RML_OP_SQUEEZE = 1860,                      /**< @brief rml_op_desc#squeeze */
-    RML_OP_STACK = 1870,                        /**< @brief rml_op_desc#stack */
-    RML_OP_SUB = 1880,                          /**< @brief rml_op_desc#sub */
-    RML_OP_TAN = 1890,                          /**< @brief rml_op_desc#tan */
-    RML_OP_TANH = 1900,                         /**< @brief rml_op_desc#tanh */
-    RML_OP_THRESHOLDED_RELU = 1910,             /**< @brief rml_op_desc#thresholded_relu */
-    RML_OP_UNSQUEEZE = 1940,                    /**< @brief rml_op_desc#unsqueeze */
+
+    /**
+     * @brief Calculates absolute of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#abs, #rml_op_unary_params
+     */
+    RML_OP_ABS = 1010,
+
+    /**
+     * @brief Calculates arccosine of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#acos, #rml_op_unary_params
+     */
+    RML_OP_ACOS = 1020,
+
+    /**
+     * @brief Sums input tensors up, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Partial. Tensor broadcasting is unsupported.
+     *
+     * @see rml_op_desc#add, #rml_op_binary_params
+     */
+    RML_OP_ADD = 1030,
+
+    /**
+     * @brief Calculates arcsine of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#asin, #rml_op_unary_params
+     */
+    RML_OP_ASIN = 1060,
+
+    /**
+     * @brief Calculates arctangent of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#atan, #rml_op_unary_params
+     */
+    RML_OP_ATAN = 1070,
+
+    /**
+     * @brief Performs batch normalization of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#batch_norm, #rml_op_batch_norm_params
+     */
+    RML_OP_BATCH_NORM = 1090,
+
+    /**
+     * @brief Adds bias to an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#bias_add, #rml_op_bias_add_params
+     */
+    RML_OP_BIAS_ADD = 1100,
+
+    /**
+     * @brief Casts elements of an input tensor to a specified type.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#cast, #rml_op_cast_params
+     */
+    RML_OP_CAST = 1110,
+
+    /**
+     * @brief Ceils elements of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#ceil, #rml_op_unary_params
+     */
+    RML_OP_CEIL = 1120,
+
+    /**
+     * @brief Limits input tensor values within a specified range.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#clip, #rml_op_clip_params
+     */
+    RML_OP_CLIP = 1140,
+
+    /**
+     * @brief Concatenates input tensors into a single tensor along a specified axis.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#concat, #rml_op_concat_params
+     */
+    RML_OP_CONCAT = 1150,
+
+    /**
+     * @brief Stores specified tensor data.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#constant, #rml_op_const_params
+     */
+    RML_OP_CONST = 1160,
+
+    /**
+     * @brief Performs 2D convolution of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#conv_2d, #rml_op_conv_2d_params
+     */
+    RML_OP_CONV_2D = 1190,
+
+    /**
+     * @brief Performs depthwise 2D convolution of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#conv_2d_depthwise, #rml_op_conv_2d_params
+     */
+    RML_OP_CONV_2D_DEPTHWISE = 1200,
+
+    /**
+     * @brief Performs transposed 2D convolution of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#conv_2d_transpose, #rml_op_conv_2d_transpose_params
+     */
+    RML_OP_CONV_2D_TRANSPOSE = 1210,
+
+    /**
+     * @brief Calculates cosine of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#cos, #rml_op_unary_params
+     */
+    RML_OP_COS = 1240,
+
+    /**
+     * @brief Rearranges input tensor data from channels into blocks of spatial data
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#depth_to_space, #rml_op_depth_to_space_params
+     */
+    RML_OP_DEPTH_TO_SPACE = 1250,
+
+    /**
+     * @brief Divides input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Partial. Scalar by tensor division is unsupported.
+     * - Apple MPS: Partial. Tensor broadcasting is unsupported.
+     *
+     * @see rml_op_desc#div, #rml_op_binary_params
+     */
+    RML_OP_DIV = 1270,
+
+    /**
+     * @brief Applies ELU activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#elu, #rml_op_elu_params
+     */
+    RML_OP_ELU = 1290,
+
+    /**
+     * @brief Calculates exponent of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#exp, #rml_op_unary_params
+     */
+    RML_OP_EXP = 1300,
+
+    /**
+     * @brief Flattens an input tensor into a 2D matrix.
+     *
+     * Backend support:
+     * - DirectML: Partial.
+     * - MIOpen: Partial. Cannot handle some cases.
+     * - Apple MPS: No. Cannot handle some cases.
+     *
+     * @see rml_op_desc#flatten, #rml_op_unary_params
+     */
+    RML_OP_FLATTEN = 1310,
+
+    /**
+     * @brief Floors elements of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#floor, #rml_op_unary_params
+     */
+    RML_OP_FLOOR = 1320,
+
+    /**
+     * @brief Calculates gemm of input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#gemm, #rml_op_gemm_params
+     */
+    RML_OP_GEMM = 1340,
+
+    /**
+     * @brief Identity operator.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#identity, #rml_op_unary_params
+     */
+    RML_OP_IDENTITY = 1350,
+
+    /**
+     * @brief Applies Leaky ReLU activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#leaky_relu, #rml_op_leaky_relu_params
+     */
+    RML_OP_LEAKY_RELU = 1360,
+
+    /**
+     * @brief Performs local response normalization of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#local_response_norm, #rml_op_local_response_norm
+     */
+    RML_OP_LOCAL_RESPONSE_NORM = 1370,
+
+    /**
+     * @brief Calculates LogSoftMax of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#log_softmax, #rml_op_unary_params
+     */
+    RML_OP_LOG_SOFTMAX = 1380,
+
+    /**
+     * @brief Calculates natural logarithm of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#logn, #rml_op_unary_params
+     */
+    RML_OP_LOGN = 1390,
+
+    /**
+     * @brief Calculates maximum of input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#max, #rml_op_binary_params
+     */
+    RML_OP_MAX = 1400,
+
+    /**
+     * @brief Calculates minimum of input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#min, #rml_op_binary_params
+     */
+    RML_OP_MIN = 1410,
+
+    /**
+     * @brief Multiplies input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#mul, #rml_op_binary_params
+     */
+    RML_OP_MUL = 1420,
+
+    /**
+     * @brief Calculates neg of the input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#neg, #rml_op_unary_params
+     */
+    RML_OP_NEG = 1430,
+
+    /**
+     * @brief Performs Parametric ReLU activation of an input tensor, elsement-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#parametric_relu, #rml_op_binary_params
+     */
+    RML_OP_PARAMETRIC_RELU = 1440,
+
+    /**
+     * @brief Special operation that holds information about input data.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#placeholder, #rml_op_placeholder_params
+     */
+    RML_OP_PLACEHOLDER = 1450,
+
+    /**
+     * @brief Performs 2D average pooling of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#pool_2d_avg, #rml_op_pool_2d_params
+     */
+    RML_OP_POOL_2D_AVG = 1490,
+
+    /**
+     * @brief Performs 2D global average pooling of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#pool_2d_global_avg, #rml_op_pool_2d_global_params
+     */
+    RML_OP_POOL_2D_GLOBAL_AVG = 1500,
+
+    /**
+     * @brief Performs 2D max pooling of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#pool_2d_max, #rml_op_pool_2d_params
+     */
+    RML_OP_POOL_2D_MAX = 1510,
+
+    /**
+     * @brief
+     *
+     * Backend support:
+     * - DirectML: No. No backend support.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#pool_2d_min, #rml_op_pool_2d_params
+     */
+    RML_OP_POOL_2D_MIN = 1520,
+
+    /**
+     * @brief Calculates reciprocal of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#recip, #rml_op_unary_params
+     */
+    RML_OP_RECIP = 1590,
+
+    /**
+     * @brief Applies ReLU activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#relu, #rml_op_unary_params
+     */
+    RML_OP_RELU = 1700,
+
+    /**
+     * @brief Applies ReLU6 activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#relu6, #rml_op_unary_params
+     */
+    RML_OP_RELU6 = 1710,
+
+    /**
+     * @brief Changes the shape of an input tensor without changing tensor data.
+     *
+     * Backend support:
+     * - DirectML: Partial. Cannot handle some cases.
+     * - MIOpen: Partial. Cannot handle some cases.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reshape, #rml_op_reshape_params
+     */
+    RML_OP_RESHAPE = 1720,
+
+    /**
+     * @brief Resizes an input tensor along spatial dims using the nearest neighbor algorithm.
+     *
+     * Backend support:
+     * - DirectML: Yes. No backend support. Custom shader.
+     * - MIOpen: Yes. No backend support. Custom shader.
+     * - Apple MPS: Yes. No backend support. Custom shader.
+     *
+     * @see rml_op_desc#resize_2d_nearest, #rml_op_resize_2d_params
+     */
+    RML_OP_RESIZE_2D_NEAREST = 1730,
+
+    /**
+     * @brief Calculates reciprocal of square root of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#rsqrt, #rml_op_unary_params
+     */
+    RML_OP_RSQRT = 1780,
+
+    /**
+     * @brief Applies Scaled ELU activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#selu, #rml_op_selu_params
+     */
+    RML_OP_SELU = 1790,
+
+    /**
+     * @brief Outputs the shape of an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#shape, #rml_op_unary_params
+     */
+    RML_OP_SHAPE = 1800,
+
+    /**
+     * @brief Applies Sigmoid activation of the input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#sigmoid, #rml_op_unary_params
+     */
+    RML_OP_SIGMOID = 1810,
+
+    /**
+     * @brief Calculates sine of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#sin, #rml_op_unary_params
+     */
+    RML_OP_SIN = 1820,
+
+    /**
+     * @brief Produces a strided slice of an input tensor along multiple axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#slice, #rml_op_slice_params
+     */
+    RML_OP_SLICE = 1830,
+
+    /**
+     * @brief Applies Softmax activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#softmax, #rml_op_unary_params
+     */
+    RML_OP_SOFTMAX = 1840,
+
+    /**
+     * @brief Applies Softplus activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#softplux, #rml_op_unary_params
+     */
+    RML_OP_SOFTPLUS = 1860,
+
+    /**
+     * @brief Applies Softsign activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#softsign, #rml_op_unary_params
+     */
+    RML_OP_SOFTSIGN = 1870,
+
+    /**
+     * @brief Rearranges blocks of spatial tensor data into channels.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#space_to_depth, #rml_op_space_to_depth_params
+     */
+    RML_OP_SPACE_TO_DEPTH = 1880,
+
+    /**
+     * @brief Calculates square root of an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#sqrt, #rml_op_unary_params
+     */
+    RML_OP_SQRT = 1900,
+
+    /**
+     * @brief Removes single-dimensional entries from the shape of a tensor.
+     *
+     * Backend support:
+     * - DirectML: Yes. Some layout transitions are unsupported.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#squeeze, #rml_op_squeeze_params
+     */
+    RML_OP_SQUEEZE = 1910,
+
+    /**
+     * @brief Stacks a list of tensors with rank R into single tensor with rank R+1.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#stack, #rml_op_stack_params
+     */
+    RML_OP_STACK = 1920,
+
+    /**
+     * @brief Subtracts input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#sub, #rml_op_binary_params
+     */
+    RML_OP_SUB = 1930,
+
+    /**
+     * @brief Calculate tangent of the input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#tan, #rml_op_unary_params
+     */
+    RML_OP_TAN = 1940,
+
+    /**
+     * @brief Applies hyperbolic tangent activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#tanh, #rml_op_unary_params
+     */
+    RML_OP_TANH = 1950,
+
+    /**
+     * @brief Applies Thresholded ReLU activation of the input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#thresholded_relu, #rml_op_thresholded_relu_params
+     */
+    RML_OP_THRESHOLDED_RELU = 1960,
+
+    /**
+     * @brief Transposes an input tensor.
+     *
+     * Backend support:
+     * - DirectML: Partial.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#transpose, #rml_op_transpose_params
+     */
+    RML_OP_TRANSPOSE = 1980,
+
+    /**
+     * @brief Inserts dimensions of size 1 at specified axis indices.
+     *
+     * Backend support:
+     * - DirectML: Yes. Some layout transitions are unsupported.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#unsqueeze, #rml_op_unsqueeze_params
+     */
+    RML_OP_UNSQUEEZE = 1990,
 
 } rml_op_type;
-
-typedef enum _rml_interpolation_type
-{
-    RML_INTERPOLATION_UNSPECIFIED = 0,
-    RML_INTERPOLATION_NEAREST = 520,
-
-} rml_interpolation_type;
 
 /**
  * @brief The padding calculation algorithm.
@@ -157,44 +831,69 @@ typedef struct _rml_size_2d
 } rml_size_2d;
 
 /**
- * Params for element-wise operation RML_OP_ELU
+ * @brief Parameters for #RML_OP_ELU operation 
+ * 
  * ELU(x) = max(0, x) + min(0, alpha * (exp(x) - 1))
  */
 typedef struct _rml_op_elu_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
-    float alpha;  /**< The alpha value for the ELU formulation. Usually is 1.0 */
+    /**
+     * The alpha value for the ELU formulation. Usually is 1.0 
+     */
+    float alpha;  
 
 } rml_op_elu_params;
 
 #define RML_OP_ELU_DEFAULT_ALPHA 1.f
 
 /**
- * Params for element-wise operation RML_OP_LEAKY_RELU
+ * @brief Parameters for #RML_OP_LEAKY_RELU operation 
+ * 
  * LeakyReLU(x) = max(0, x) + alpha * min(0, x)
  */
 typedef struct _rml_op_leaky_relu_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
-    float alpha;  /**< The alpha value for the LeakyReLU formulation. Controls the angle of the
-                       negative slope. Usually is 0.2f */
+    /**
+     * The alpha value for the LeakyReLU formulation. 
+     * Controls the angle of the negative slope. Usually is 0.2f 
+     */
+    float alpha;  
 
 } rml_op_leaky_relu_params;
 
 #define RML_OP_LEAKY_RELU_DEFAULT_ALPHA 0.2f
 
 /**
- * Params for element-wise operation RML_OP_SELU
+ * @brief Parameters for #RML_OP_SELU operation 
+ * 
  * SeLU(x) = gamma * (alpha * e^x - alpha)
  */
 typedef struct _rml_op_selu_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
-    float alpha; /**< The alpha value for the SeLU formulation.*/
-    float gamma; /**< The gamma value for the SeLU formulation.*/
+    /**
+     * The alpha value for the SeLU formulation.
+     */
+    float alpha;
+
+    /**
+     * The gamma value for the SeLU formulation.
+     */
+    float gamma; 
 
 } rml_op_selu_params;
 
@@ -202,106 +901,280 @@ typedef struct _rml_op_selu_params
 #define RML_OP_SELU_DEFAULT_GAMMA 1.0507f
 
 /**
- * Params for element-wise operation RML_OP_THRESHOLDED_RELU
+ * @brief Parameters for #RML_OP_THRESHOLDED_RELU operation 
+ *
  * ThReLU(x) = x, x > alpha
  * ThReLU(x) = 0, x <= alpha
  */
 typedef struct _rml_op_thresholded_relu_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
-    float alpha;  /**< The threshold value for the ThReLU formulation.*/
+    /**
+     * The threshold value for the ThReLU formulation.
+     */
+    float alpha;  
 
 } rml_op_thresholded_relu_params;
 
 #define RML_OP_THRESHOLDED_RELU_DEFAULT_ALPHA 0.f
 
 /**
- * Params for operation RML_OP_BATCH_NORMALIZATION
+ * @brief Parameters for #RML_OP_BATCH_NORM operation 
+ *
  * f(x) = scale * (x - mean) / sqrt(variance + epsilon) + bias.
  */
 typedef struct _rml_op_batch_norm_params
 {
-    rml_op input;    /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
-    rml_op mean;     /**< Constant operation that outputs tensor containing the batch mean */
-    rml_op variance; /**< Constant operation that outputs tensor containing the batch variance */
-    rml_op scale;    /**< Constant operation that outputs tensor containing the scale */
-    rml_op bias;     /**< Constant operation that outputs tensor containing the batch bias */
+    /**
+     * Constant operation that outputs tensor containing the batch mean
+     */
+    rml_op mean;
 
-    float epsilon;   /**< Small value to use to avoid division by zero */
+    /** 
+     * Constant operation that outputs tensor containing the batch variance
+     */
+    rml_op variance;
+
+    /**
+     * Constant operation that outputs tensor containing the scale
+     */
+    rml_op scale;
+
+    /** 
+     * Constant operation that outputs tensor containing the batch bias
+     */
+    rml_op bias;
+
+    /**
+     * Small value to use to avoid division by zero
+     */
+    float epsilon;  
 
 } rml_op_batch_norm_params;
 
 #define RML_OP_BATCH_NORMALIZATION_DEFAULT_EPSILON 1e-5f
 
 /**
- * Params for operation RML_OP_CAST
+ * @brief Parameters for operation #RML_OP_CAST
+ *
  * Performs the cast function f(x) = cast(x),
  * casting each element in the input to the data type of the output tensor
  */
 typedef struct _rml_op_cast_params
 {
-    rml_op input;      /**< Operation that outputs tensor containing input data */
-    rml_dtype cast_to;  /**< Output data type */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
+
+    rml_dtype cast_to; /**< Output data type */
 
 } rml_op_cast_params;
 
 /**
- * Params for operation RML_OP_CLIP
- * f(x) = clamp(x, min, max)
+ * @brief Parameters for operation #RML_OP_CLIP
+ * 
+ * f(x) = clip(x, min, max)
  */
 typedef struct _rml_op_clip_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
-    float min;    /**< \brief The minimum value, below which the operator replaces the value with */
-    float max;    /**< \brief The maximum value, above which the operator replaces the value with */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
+
+    /**
+     * The minimum value, below which the operator replaces the value with
+     */
+    float min;
+
+    /**
+     * The maximum value, above which the operator replaces the value with
+     */
+    float max;
 
 } rml_op_clip_params;
 
 #define RML_OP_CLIP_DEFAULT_MIN 0.f
 #define RML_OP_CLIP_DEFAULT_MAX 1.f
 
+
+/**
+ * @brief Parameters for operation #RML_OP_CONST
+ *
+ * RML_OP_CONST operation copy constant tensor data from host to device
+ */
 typedef struct _rml_op_const_params
 {
+    /**
+     * Information about tensor
+     */
     rml_tensor_info tensor_info;
+
+    /**
+     * Host data to copy
+     */
     void const* tensor_data;
 
 } rml_op_const_params;
 
 /**
- * @brief The convolution operation parameters
+ * @brief Parameters for operation #RML_OP_CONV_2D
  */
-typedef struct _rml_op_convolution_2d_params
+typedef struct _rml_op_conv_2d_params
 {
-    rml_op input;           /**< Operation that outputs tensor containing input data */
-    rml_op weights;         /**< Constant operation that outputs tensor containing the filter weights */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
-    rml_padding_type padding_type; /**< Padding calculation algorithm. See @ref rml_padding_type*/
+    /**
+     * Constant operation that outputs tensor containing the filter weights
+     */
+    rml_op weights;
 
-    rml_size_2d strides;        /**< Stride along each spatial axis.
-                                     If not present, the stride defaults is 1 along each spatial axis. */
-    rml_size_2d dilations;      /**< Dilation value along each spatial axis of the kernel.
-                                     If not present, the dilation defaults is 1 along each spatial axis. */
-    rml_size_2d start_paddings; /**< Number of pixels added to the beginning of the each spatialaxis. 
-                                     Only make sense if padding type is RML_PADDING_EXPLICIT.
-                                     If not present, the padding defaults to 0 along start of each spatial axis. */
-    rml_size_2d end_paddings;   /**< Number of pixels added to the end of the each spatial axis.
-                                     Only make sense if padding type is RML_PADDING_EXPLICIT.
-                                     If not present, the padding defaults to 0 along end of each spatial axis. */
-    uint32_t num_groups;        /**< Number of groups input channels and output channels are divided into */
-} rml_op_convolution_2d_params;
+    /**
+     * Padding calculation algorithm. See @ref rml_padding_type
+     */
+    rml_padding_type padding_type; 
 
-#define RML_OP_CONV_2D_DEFAULT_NUM_GROUPS   1
+    /**
+     * Stride along each spatial axis.
+     * If not present, the stride defaults is 1 along each spatial axis.
+     */
+    rml_size_2d strides;
 
+    /**
+     * Dilation value along each spatial axis of the kernel.
+     * If not present, the dilation defaults is 1 along each spatial axis.
+     */
+    rml_size_2d dilations;
+
+    /**
+     * Number of pixels added to the beginning of the each spatial axis. 
+     * Only make sense if padding type is RML_PADDING_EXPLICIT. 
+     * If not present, the padding defaults to 0 along start of each spatial axis.
+     */
+    rml_size_2d start_paddings;
+
+    /** 
+     * Number of pixels added to the end of the each spatial axis.
+     * Only make sense if padding type is RML_PADDING_EXPLICIT.
+     * If not present, the padding defaults to 0 along end of each spatial axis.
+     */
+    rml_size_2d end_paddings;
+
+    /** 
+     * Number of groups input channels and output channels are divided into.
+     * A zero value is replaced with the default value 1.
+     */
+    uint32_t num_groups;
+
+} rml_op_conv_2d_params;
+
+/**
+ * @brief Parameters for operation #RML_OP_CONV_2D_TRANSPOSE
+ */
+typedef struct _rml_op_conv_2d_transpose_params
+{
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
+
+    /**
+     * Constant operation that outputs tensor containing the filter weights
+     */
+    rml_op weights; 
+
+    /**
+     * Padding calculation algorithm. See @ref rml_padding_type
+     */
+    rml_padding_type padding_type;
+
+    /** 
+     * Stride along each spatial axis.
+     * If not present, the stride defaults is 1 along each spatial axis.
+     */
+    rml_size_2d strides;
+
+    /**
+     * Dilation value along each spatial axis of the kernel.
+     * If not present, the dilation defaults is 1 along each spatial axis.
+     */
+    rml_size_2d dilations;
+
+    /**
+     * Number of pixels added to the beginning of the each spatial axis.
+     * Only make sense if padding type is RML_PADDING_EXPLICIT.
+     * If not present, the padding defaults to 0 along start of each spatial axis.
+     */
+    rml_size_2d start_paddings;
+
+    /**
+     * Number of pixels added to the end of the each spatial axis.
+     * Only make sense if padding type is RML_PADDING_EXPLICIT.
+     * If not present, the padding defaults to 0 along end of each spatial axis.
+     */
+    rml_size_2d end_paddings;
+
+    /**
+     * Number of groups input channels and output channels are divided into.
+     * A zero value is replaced with the default value 1.
+     */
+    uint32_t num_groups;
+
+    /**
+     * The shape of the output tensor.
+     */
+    rml_size_2d output_shape;
+
+    /**
+     * The zero-padding added to one side of the output.
+     */
+    rml_size_2d output_paddings; 
+
+} rml_op_conv_2d_transpose_params;
+
+#define RML_OP_CONV_2D_DEFAULT_NUM_GROUPS 1
+
+/**
+ * @brief Parameters for #RML_OP_DEPTH_TO_SPACE operation 
+ * that rearranges tensor data from channels into blocks of spatial data.
+ * 
+ * More specifically, this op outputs a copy of the input tensor 
+ * where values from the channel dimension are moved in spatial blocks 
+ * to the height and width dimensions. For example,
+ * rearranges tensor of shape (N, C * bs^2, H, W) to a tensor of shape (N, C, H * bs, W * bs).
+ */
 typedef struct _rml_op_depth_to_space_params
 {
-    rml_op input; /**< \brief Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
+    /**
+     * Size of data blocks are rearranged
+     */
     uint32_t block_size;
 
 } rml_op_depth_to_space_params;
 
+/**
+ * @brief Parameters for #RML_OP_PLACEHOLDER operation 
+ *
+ * Represents placeholder for a tensor that will be fed as model input
+ */
 typedef struct _rml_op_placeholder_params
 {
     rml_tensor_info tensor_info;
@@ -309,192 +1182,375 @@ typedef struct _rml_op_placeholder_params
 } rml_op_placeholder_params;
 
 /**
-* @brief The poolng operation parameters
-*/
-typedef struct _rml_op_pooling_2d_params
+ * @brief Parameters for #RML_OP_POOL_2D_AVG, #RML_OP_POOL_2D_MIN and #RML_OP_POOL_2D_MAX operations.
+ *
+ * RML_OP_POOL_2D* operations apply pooling across the tensor according to 
+ * kernel size, strides and dilations.
+ */
+typedef struct _rml_op_pool_2d_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
     rml_padding_type padding_type; /**< Padding calculation algorithm. See @ref rml_padding_type*/
-
     rml_size_2d kernel_size;    /**< Spatial sizes of polling kernel */
-    rml_size_2d strides;        /**< Stride along each spatial axis. 
+    rml_size_2d strides;        /**< Stride along each spatial axis.
                                      If not present, the stride defaults is 1 along each spatial axis. */
-    rml_size_2d dilations;      /**< Dilation value along each spatial axis of the kernel. 
+    rml_size_2d dilations;      /**< Dilation value along each spatial axis of the kernel.
                                      If not present, the dilation defaults is 1 along each spatial axis. */
-    rml_size_2d start_paddings; /**< Number of pixels added to the beginning of the each spatial axis.
-                                     Only make sense if padding type is RML_PADDING_EXPLICIT. 
-                                     If not present, the padding defaults to 0 along start of each spatial axis. */
+    rml_size_2d start_paddings; /**< Number of pixels added to the beginning of the each spatial
+                                     axis. Only make sense if padding type is RML_PADDING_EXPLICIT.
+                                     If not present, the padding defaults to 0 along start of each
+                                     spatial axis. */
     rml_size_2d end_paddings;   /**< Number of pixels added to the end of the each spatial axis.
-                                     Only make sense if padding type is RML_PADDING_EXPLICIT. 
-                                     If not present, the padding defaults to 0 along end of each spatial
-                                     axis. */
+                                     Only make sense if padding type is RML_PADDING_EXPLICIT.
+                                     If not present, the padding defaults to 0 along end of each
+                                     spatial axis. */
     rml_bool ceil_mode;         /**< Whether to use ceil or floor (default) to compute the output shape. */
-} rml_op_pooling_2d_params;
 
+} rml_op_pool_2d_params;
+
+/**
+ * @brief The global poolng operation parameters
+ */
+typedef struct _rml_op_pool_2d_global_params
+{
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
+
+} rml_op_pool_2d_global_params;
+
+/**
+ * @brief Parameters for #RML_OP_SPACE_TO_DEPTH operation.
+ *
+ * RML_OP_SPACE_TO_DEPTH operation rearranges blocks of spatial tensor data into channels.
+ * More specifically, this op outputs a copy of the input tensor 
+ * where values from the height and width dimensions are moved to the channel dimension. 
+ * E.g., rearranges tensor of shape (N, C, H * bs, W * bs) to a tensor of shape (N, C * bs^2, H, W).
+ */
 typedef struct _rml_op_space_to_depth_params
 {
-    rml_op input; /**< \brief Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
+    /**
+     * Size of data blocks are rearranged 
+     */
     uint32_t block_size;
 
 } rml_op_space_to_depth_params;
 
-typedef struct _rml_op_resize_2d_params
+/**
+ * @brief Parameters for #RML_OP_RESIZE_2D_NEAREST operation.
+ *
+ * RML_OP_RESIZE_2D_NEAREST operation resize input tensor to output spatial shape specified by @p size
+ * using nearest neighbour algorithm
+ */
+typedef struct _rml_op_resize_2d_nearest_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
+
+    /**
+     * Output spatial size 
+     */
     rml_op size;
 
-    rml_interpolation_type interpolation_type;
-    rml_bool align_corners;
-
-} rml_op_resize_2d_params;
+} rml_op_resize_2d_nearest_params;
 
 /**
  * @brief Parameters for all RML_OP_* operations
  */
 typedef struct _rml_op_unary_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
 } rml_op_unary_params;
 
 /**
- * @brief Parameters for operations RML_OP_CEIL and RML_OP_FLOOR
+ * @brief Parameters for #RML_OP_CEIL and #RML_OP_FLOOR operations.
  */
 typedef struct _rml_op_round_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input data */
+    /** 
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
 
 } rml_op_round_params;
 
 /**
- * Params for element-wise binary operations Add, Sub, Mul, Div, Min, Max, Mean
+ * Parameters for element-wise binary operations #RML_OP_ADD, #RML_OP_DIV, etc
  */
 typedef struct _rml_op_binary_params
 {
-    rml_op input1; /**< Operation that outputs tensor containing the first input data */
-    rml_op input2; /**< Operation that outputs tensor containing the second input data */
+    /**
+     * Operation that outputs tensor containing the first input data
+     */
+    rml_op input1;
+
+    /**
+     * Operation that outputs tensor containing the second input data
+     */
+    rml_op input2;
 
 } rml_op_binary_params;
 
 /**
- * Params for reshape operation
+ * @brief Parameters for #RML_OP_RESHAPE operation.
+ *
+ * RML_OP_RESHAPE operation reshapes the input tensor similar to numpy.reshape. 
+ * The @p input is the data tensor, the @p shape is a tensor that specifies the output shape.
  */
 typedef struct _rml_op_reshape_params
 {
+    /**
+     * Operation that outputs tensor containing data to reshape
+     */
     rml_op input;
-    rml_op shape;
 
-    rml_layout axes_layout;
+    /**
+     * Operation that outputs tensor containing shape data
+     */
+    rml_op shape;
 
 } rml_op_reshape_params;
 
 /**
- * Params for bias_add operation
+ *  @brief Parameters for #RML_OP_BIAS_ADD operation.
  */
 typedef struct _rml_op_bias_add_params
 {
+    /**
+     * Operation that outputs tensor containing input data
+     */
     rml_op input;
+    /**
+     * Operation that outputs tensor containing bias data
+     */
     rml_op bias;
 
 } rml_op_bias_add_params;
 
 /**
- * @brief Parameters for RML_OP_CONCAT operation.
+ * @brief Parameters for #RML_OP_CONCAT operation.
  *
  * RML_OP_CONCAT operation concatenates a list of tensors along the specified dimension.
- * All tensors MUST have the same shape and type, except for the dimension size of the axis to concatenate on.
+ * All tensors MUST have the same shape and type, except for the dimension size of the axis to
+ * concatenate on.
  */
 typedef struct _rml_op_concat_params
 {
-    rml_op* inputs;          /**< A list of operations that output tensors containing input data. */
-    size_t num_inputs;       /**< A number of input operations. */
-    rml_op axis;             /**< The axis to stack along. A negative value means counting dimensions from back. 
-                                  Accepted range is [-R, R-1] where R = rank(inputs[i]). */
+    /**
+     * A number of input operations
+     */
+    size_t num_inputs;
+
+    /**
+     * A list of operations that outputs tensors containing input data
+     */
+    rml_op* inputs;
+
+    /**
+     * The axis to stack along.
+     * A negative value means counting dimensions from back.
+     * Accepted range is [-R, R-1] where R = rank(inputs[i]).
+     */
+    rml_op axis;
+
 } rml_op_concat_params;
 
 /**
- * @brief Parameters for RML_OP_STACK operation. 
- * 
- * RML_OP_STACK operation Stacks a list of tensors with rank R 
-   into single tensor with rank R+1. All tensors MUST have the same shape and type.
+ * @brief Parameters for #RML_OP_STACK operation.
+ *
+ * RML_OP_STACK operation Stacks a list of tensors with rank R
+ * into single tensor with rank R+1. All tensors MUST have the same shape and type.
  */
 typedef struct _rml_op_stack_params
 {
-    rml_op* inputs;    /**< A list of operations that output tensors containing input data. */
-    size_t num_inputs; /**< A number of input operations. */
-    int axis;          /**< The axis to stack along. A negative value means counting dimensions from back. 
-                            Accepted range is [-R, R-1] where R = rank(inputs[i]). */
+    /** 
+     * A number of input operations.
+     */
+    size_t num_inputs;
+
+    /** 
+     * A list of operations that output tensors containing input data.
+     */
+    rml_op* inputs;
+
+    /** 
+     * The axis to stack along. A negative value means counting dimensions from back.
+     * Accepted range is [-R, R-1] where R = rank(inputs[i]).
+     */
+    int axis;
+
 } rml_op_stack_params;
 
 /**
+ * @brief Parameters for #RML_OP_SQUEEZE operation.
  *
- * Params for squeeze operation
+ * RML_OP_SQUEEZE operation removes single-dimensional entries from the shape of a tensor.
  */
 typedef struct _rml_op_squeeze_params
 {
+    /** 
+     * Operation that outputs tensor containing the input data
+     */
     rml_op input;
-    rml_layout axes_layout;
-    const int32_t* axes;
+
+    /**
+     * Number of axes to squeeze. 
+     */
     size_t num_axes;
+
+    /**
+     * List of integers indicating the dimensions to squeeze.
+     * Negative value means counting dimensions from the back.
+     * Accepted range is [-R, R-1] where R = rank(data).
+     */
+    const int32_t* axes;
 
 } rml_op_squeeze_params;
 
 /**
+ * @brief Parameters for #RML_OP_SLICE operation.
+ *
  * Semantic is the same as for the start:stop:step notation in Numpy.
  * Additionally, "axes" specifies axes to apply slice
  * https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html
  */
 typedef struct _rml_op_slice_params
 {
+    /**
+     * Operation that outputs tensor of data to extract slices from
+     */
     rml_op input;
+ 
+    /**
+     * Operaton that outputs 1-D tensor of axes that `starts` and `ends` apply to. 
+     * Negative value means counting dimensions from the back. 
+     * Accepted range is [-R, R-1] where R = rank(data).
+     */
     rml_op axes;
+
+    /**
+     * Operaton that outputs 1-D tensor of starting indices of corresponding axis in `axes`
+     */
     rml_op starts;
+
+    /**
+     * Operaton that outputs 1-D tensor of ending indices (exclusive) of corresponding axis in `axes`
+     */
     rml_op ends;
+
+    /**
+     * Operation that outputs tensor of slice step of corresponding axis in `axes`.
+     * Negative value means slicing backward. 'steps' cannot be 0. 
+     * Only stride=1 is supported now
+     */
     rml_op strides;
-    rml_layout layout;
 
 } rml_op_slice_params;
 
 /**
- * Params for unsqueeze operation
- this operation inserts a dimension of size 1 at the dimension index axis of input's shape. 
+ * @brief Parameters for #RML_OP_TRANSPOSE operation.
+ *
+ * Transpose the @p input tensor similar to numpy.transpose. For example, when perm=(1, 0, 2), given an
+ * input tensor of shape (1, 2, 3), the output shape will be (2, 1, 3).
+ *
+ * NOTE: This operator currently is ONLY for internal usage. Don't use it directly.
+ */
+typedef struct _rml_op_transpose_params
+{
+    /**
+     * Operation that outputs tensor containing input data.
+     */
+    rml_op input;
+
+    /**
+     * Number of axes that MUST be equal to rank of input tensor.
+     */
+    size_t num_axes;
+
+    /** A nullable list of axis. 
+     * If null, reverse the dimensions, 
+     * otherwise permute the axes according to the values given.
+     */
+    const int32_t* axes;
+
+} rml_op_transpose_params;
+
+/**
+ * @brief Parameters for #RML_OP_UNSQUEEZE operation.
+ * 
+ * Inserts a dimension of size 1 at the dimension index axis of input's shape.
  */
 typedef struct _rml_op_unsqueeze_params
 {
-    rml_op input; 
+    /**
+     * Operation that outputs tensor containing input data.
+     */
+    rml_op input;
+
+    /**
+     * Dimension index where insert 1.
+     */
     rml_op axis;
-    rml_layout axes_layout;
 
 } rml_op_unsqueeze_params;
 
 /**
- * Params for Flatten operation
- * Flattens the input. Does not affect the batch size.
- */
-typedef struct _rml_op_flatten_params
-{
-    rml_op input; /**< Operation that outputs tensor containing input */
-
-} rml_op_flatten_params;
-
-/**
- * Params for GEMM operation
+ * @brief Parameters for #RML_OP_GEMM operation.
+ *
  * Y = alpha * transA(A) * transB(B) + beta * C
  */
 typedef struct _rml_op_gemm_params
 {
-    rml_op input_a; /**< Operation that outputs tensor containing input A */
-    rml_op input_b; /**< Operation that outputs tensor containing input B */
-    rml_op input_c; /**< Operation that outputs tensor containing input C, optional. */
+    /**
+     * Operation that outputs tensor containing input A
+     */
+    rml_op input_a;
 
-    float alpha;          /**< A scalar multiplier for the product of inputs A and B. */
-    float beta;           /**< A scalar multiplier for the optional input C. */
-    rml_bool transpose_a; /**< A transform to be applied to the A tensor; either a transpose, or no
-                             transform.*/
-    rml_bool transpose_b; /**< A transform to be applied to the B tensor; either a transpose, or no
-                             transform.*/
+    /**
+     * Operation that outputs tensor containing input B
+     */
+    rml_op input_b;
+
+    /**
+     * Operation that outputs tensor containing input C, optional
+     */
+    rml_op input_c;
+
+    /**
+     * A scalar multiplier for the product of inputs A and B
+     */
+    float alpha;
+
+    /**
+     * A scalar multiplier for the optional input C
+     */
+    float beta;
+
+    /**
+     * A transform to be applied to the A tensor; either a transpose, or no transform
+     */
+    rml_bool transpose_a;
+
+    /**
+     * A transform to be applied to the B tensor; either a transpose, or no transform
+     */
+    rml_bool transpose_b;
 
 } rml_op_gemm_params;
 
@@ -502,19 +1558,43 @@ typedef struct _rml_op_gemm_params
 #define RML_OP_GEMM_DEFAULT_BETA 1.f
 
 /**
- * @brief Parameters for RML_OP_LRN operation (Local Response Normalization)
+ * @brief Parameters for #RML_OP_LOCAL_RESPONSE_NORMALIZATION operation.
  */
-typedef struct _rml_op_lrn
+typedef struct _rml_op_local_response_norm_params
 {
-    rml_op input; /**< Operation that outputs tensor containing input */
-    uint32_t size; /**< the number of channels to sum over (for cross channel LRN) or
-                   the side length of the square region to sum over (for within channel LRN) */
-    float alpha; /**< Scaling parameter */
-    float beta; /**< Exponent parameter */
-    float bias; /**< Bias parameter */
-    rml_bool cross_channel; /**< whether to sum over adjacent channels (for cross channel LRN) or
-                            nearby spatial locations (for within channel LRN) */
-} rml_op_lrn;
+    /**
+     * Operation that outputs tensor containing input tensor data
+     */
+    rml_op input;
+
+    /**
+     * The number of channels to sum over (for cross channel LRN) or
+     * the side length of the square region to sum over (for within channel LRN)
+     */
+    uint32_t size;
+
+    /**
+     * Scaling parameter
+     */
+    float alpha;
+
+    /**
+     * Exponent parameter
+     */
+    float beta;
+
+    /** 
+     * Bias parameter
+     */
+    float bias;
+    
+    /**
+     * Whether to sum over adjacent channels (for cross channel LRN) or
+     * nearby spatial locations (for within channel LRN) 
+     */
+    rml_bool cross_channel; 
+
+} rml_op_local_response_norm_params;
 
 #define RML_OP_LRN_DEFAULT_ALPHA 0.0001f
 #define RML_OP_LRN_DEFAULT_BETA 0.75f
@@ -527,71 +1607,195 @@ typedef struct _rml_op_desc
 
     union
     {
-        rml_op_unary_params abs;                         /**< @brief #RML_OP_ABS */
-        rml_op_unary_params acos;                        /**< @brief #RML_OP_ACOS */
-        rml_op_binary_params add;                        /**< @brief #RML_OP_ADD */
-        rml_op_unary_params asin;                        /**< @brief #RML_OP_ASIN */
-        rml_op_unary_params atan;                        /**< @brief #RML_OP_ATAN */
-        rml_op_batch_norm_params batch_norm;             /**< @brief #RML_OP_BATCH_NORMALIZATION */
-        rml_op_bias_add_params bias_add;                 /**< @brief #RML_OP_BIAS_ADD */
-        rml_op_cast_params cast;                         /**< @brief #RML_OP_CAST */
-        rml_op_unary_params ceil;                        /**< @brief #RML_OP_CEIL */
-        rml_op_clip_params clip;                         /**< @brief #RML_OP_CLIP */
-        rml_op_concat_params concat;                     /**< @brief #RML_OP_CONCAT */
-        rml_op_const_params constant;                    /**< @brief #RML_OP_CONST */
-        rml_op_convolution_2d_params conv2d;             /**< @brief #RML_OP_CONV_2D */
-        rml_op_convolution_2d_params conv2d_depthwise;   /**< @brief #RML_OP_CONV_2D_DEPTHWISE */
-        rml_op_unary_params cos;                         /**< @brief #RML_OP_COS */
-        rml_op_depth_to_space_params depth2space;        /**< @brief #RML_OP_DEPTH_TO_SPACE */
-        rml_op_binary_params div;                        /**< @brief #RML_OP_DIV */
-        rml_op_elu_params elu;                           /**< @brief #RML_OP_ELU */
-        rml_op_unary_params exp;                         /**< @brief #RML_OP_EXP */
-        rml_op_flatten_params flatten;                   /**< @brief #RML_OP_FLATTEN */
-        rml_op_unary_params floor;                       /**< @brief #RML_OP_FLOOR */
-        rml_op_gemm_params gemm;                         /**< @brief #RML_OP_GEMM */
-        rml_op_unary_params identity;                    /**< @brief #RML_OP_IDENTITY */
-        rml_op_leaky_relu_params leaky_relu;             /**< @brief #RML_OP_LEAKY_RELU */
-        rml_op_lrn lrn;                                  /**< @brief #RML_OP_LOCAL_RESPONSE_NORMALIZATION */
-        rml_op_unary_params log_softmax;                 /**< @brief #RML_OP_LOG_SOFTMAX */
-        rml_op_unary_params logn;                        /**< @brief #RML_OP_LOGN */
-        rml_op_binary_params max;                        /**< @brief #RML_OP_MAX */
-        rml_op_unary_params mean;                        /**< @brief #RML_OP_MEAN */
-        rml_op_binary_params min;                        /**< @brief #RML_OP_MIN */
-        rml_op_binary_params mul;                        /**< @brief #RML_OP_MUL */
-        rml_op_unary_params neg;                         /**< @brief #RML_OP_NEG */
-        rml_op_binary_params parametric_relu;            /**< @brief #RML_OP_PARAMETRIC_RELU */
-        rml_op_placeholder_params placeholder;           /**< @brief #RML_OP_PLACEHOLDER */
-        rml_op_pooling_2d_params pool2d_avg;             /**< @brief #RML_OP_POOL_2D_AVG */
-        rml_op_pooling_2d_params pool2d_avg_global;      /**< @brief #RML_OP_POOL_2D_AVG_GLOBAL */
-        rml_op_pooling_2d_params pool2d_max;             /**< @brief #RML_OP_POOL_2D_MAX */
-        rml_op_pooling_2d_params pool2d_min;             /**< @brief #RML_OP_POOL_2D_MIN */
-        rml_op_unary_params pow;                         /**< @brief #RML_OP_POW */
-        rml_op_unary_params recip;                       /**< @brief #RML_OP_RECIP */
-        rml_op_unary_params relu;                        /**< @brief #RML_OP_RELU */
-        rml_op_unary_params relu6;                       /**< @brief #RML_OP_RELU_6 */
-        rml_op_reshape_params reshape;                   /**< @brief #RML_OP_RESHAPE */
-        rml_op_resize_2d_params resize2d;                /**< @brief #RML_OP_RESIZE_2D */
-        rml_op_unary_params rsqrt;                       /**< @brief #RML_OP_RSQRT */
-        rml_op_selu_params selu;                         /**< @brief #RML_OP_SELU */
-        rml_op_unary_params shape;                       /**< @brief #RML_OP_SHAPE */
-        rml_op_unary_params sigmoid;                     /**< @brief #RML_OP_SIGMOID */
-        rml_op_unary_params sin;                         /**< @brief #RML_OP_SIN */
-        rml_op_slice_params slice;                       /**< @brief #RML_OP_SLICE */
-        rml_op_unary_params softmax;                     /**< @brief #RML_OP_SOFTMAX */
-        rml_op_unary_params softplux;                    /**< @brief #RML_OP_SOFTPLUS */
-        rml_op_unary_params softsign;                    /**< @brief #RML_OP_SOFTSIGN */
-        rml_op_space_to_depth_params space2depth;        /**< @brief #RML_OP_SPACE_TO_DEPTH */
-        rml_op_unary_params sqrt;                        /**< @brief #RML_OP_SQRT */
-        rml_op_squeeze_params squeeze;                   /**< @brief #RML_OP_SQUEEZE */
-        rml_op_stack_params stack;                       /**< @brief #RML_OP_STACK */
-        rml_op_binary_params sub;                        /**< @brief #RML_OP_SUB */
-        rml_op_unary_params tan;                         /**< @brief #RML_OP_TAN */
-        rml_op_unary_params tanh;                        /**< @brief #RML_OP_TANH */
-        rml_op_thresholded_relu_params thresholded_relu; /**< @brief #RML_OP_THRESHOLDED_RELU */
-        rml_op_unsqueeze_params unsqueeze;               /**< @brief #RML_OP_UNSQUEEZE */
+        /** @see #RML_OP_ABS, #rml_op_unary_params */
+        rml_op_unary_params abs;
+
+        /** @see #RML_OP_ACOS, #rml_op_unary_params */
+        rml_op_unary_params acos;
+
+        /** @see #RML_OP_ADD, #rml_op_binary_params */
+        rml_op_binary_params add;
+
+        /** @see #RML_OP_ASIN, #rml_op_unary_params */
+        rml_op_unary_params asin;
+
+        /** @see #RML_OP_ATAN, #rml_op_unary_params */
+        rml_op_unary_params atan;
+
+        /** @see #RML_OP_BATCH_NORM, #rml_op_batch_norm_params */
+        rml_op_batch_norm_params batch_norm;
+
+        /** @see #RML_OP_BIAS_ADD, #rml_op_bias_add_params */
+        rml_op_bias_add_params bias_add;
+
+        /** @see #RML_OP_CAST, #rml_op_cast_params */
+        rml_op_cast_params cast;
+
+        /** @see #RML_OP_CEIL, #rml_op_unary_params */
+        rml_op_unary_params ceil;
+
+        /** @see #RML_OP_CLIP, #rml_op_clip_params */
+        rml_op_clip_params clip;
+
+        /** @see #RML_OP_CONCAT, #rml_op_concat_params */
+        rml_op_concat_params concat;
+
+        /** @see #RML_OP_CONST, #rml_op_const_params */
+        rml_op_const_params constant;
+
+        /** @see #RML_OP_CONV_2D, #rml_op_conv_2d_params */
+        rml_op_conv_2d_params conv_2d;
+
+        /** @see #RML_OP_CONV_2D_DEPTHWISE, #rml_op_conv_2d_params */
+        rml_op_conv_2d_params conv_2d_depthwise;
+
+        /** @see #RML_OP_CONV_2D_TRANSPOSE, #rml_op_conv_2d_transpose_params */
+        rml_op_conv_2d_transpose_params conv_2d_transpose;
+
+        /** @see #RML_OP_COS, #rml_op_unary_params */
+        rml_op_unary_params cos;
+
+        /** @see #RML_OP_DEPTH_TO_SPACE, #rml_op_depth_to_space_params */
+        rml_op_depth_to_space_params depth_to_space;
+
+        /** @see #RML_OP_DIV, #rml_op_binary_params */
+        rml_op_binary_params div;
+
+        /** @see #RML_OP_ELU, #rml_op_elu_params */
+        rml_op_elu_params elu;
+
+        /** @see #RML_OP_EXP, #rml_op_unary_params */
+        rml_op_unary_params exp;
+
+        /** @see #RML_OP_FLATTEN, #rml_op_unary_params */
+        rml_op_unary_params flatten;
+
+        /** @see #RML_OP_FLOOR, #rml_op_unary_params */
+        rml_op_unary_params floor;
+
+        /** @see #RML_OP_GEMM, #rml_op_gemm_params */
+        rml_op_gemm_params gemm;
+
+        /** @see #RML_OP_IDENTITY, #rml_op_unary_params */
+        rml_op_unary_params identity;
+
+        /** @see #RML_OP_LEAKY_RELU, #rml_op_leaky_relu_params */
+        rml_op_leaky_relu_params leaky_relu;
+
+        /** @see #RML_OP_LOCAL_RESPONSE_NORM, #rml_op_local_response_norm */
+        rml_op_local_response_norm_params local_response_norm;
+
+        /** @see #RML_OP_LOG_SOFTMAX, #rml_op_unary_params */
+        rml_op_unary_params log_softmax;
+
+        /** @see #RML_OP_LOGN, #rml_op_unary_params */
+        rml_op_unary_params logn;
+
+        /** @see #RML_OP_MAX, #rml_op_binary_params */
+        rml_op_binary_params max;
+
+        /** @see #RML_OP_MIN, #rml_op_binary_params */
+        rml_op_binary_params min;
+
+        /** @see #RML_OP_MUL, #rml_op_binary_params */
+        rml_op_binary_params mul;
+
+        /** @see #RML_OP_NEG, #rml_op_unary_params */
+        rml_op_unary_params neg;
+
+        /** @see #RML_OP_PARAMETRIC_RELU, #rml_op_binary_params */
+        rml_op_binary_params parametric_relu;
+
+        /** @see #RML_OP_PLACEHOLDER, #rml_op_placeholder_params */
+        rml_op_placeholder_params placeholder;
+
+        /** @see #RML_OP_POOL_2D_AVG, #rml_op_pool_2d_params */
+        rml_op_pool_2d_params pool_2d_avg;
+
+        /** @see #RML_OP_POOL_2D_GLOBAL_AVG, #rml_op_pool_2d_global_params */
+        rml_op_pool_2d_global_params pool_2d_global_avg;
+
+        /** @see #RML_OP_POOL_2D_MAX, #rml_op_pool_2d_params */
+        rml_op_pool_2d_params pool_2d_max;
+
+        /** @see #RML_OP_POOL_2D_MIN, #rml_op_pool_2d_params */
+        rml_op_pool_2d_params pool_2d_min;
+
+        /** @see #RML_OP_RECIP, #rml_op_unary_params */
+        rml_op_unary_params recip;
+
+        /** @see #RML_OP_RELU, #rml_op_unary_params */
+        rml_op_unary_params relu;
+
+        /** @see #RML_OP_RELU6, #rml_op_unary_params */
+        rml_op_unary_params relu6;
+
+        /** @see #RML_OP_RESHAPE, #rml_op_reshape_params */
+        rml_op_reshape_params reshape;
+
+        /** @see #RML_OP_RESIZE_2D_NEAREST, #rml_op_resize_2d_params */
+        rml_op_resize_2d_nearest_params resize_2d_nearest;
+
+        /** @see #RML_OP_RSQRT, #rml_op_unary_params */
+        rml_op_unary_params rsqrt;
+
+        /** @see #RML_OP_SELU, #rml_op_selu_params */
+        rml_op_selu_params selu;
+
+        /** @see #RML_OP_SHAPE, #rml_op_unary_params */
+        rml_op_unary_params shape;
+
+        /** @see #RML_OP_SIGMOID, #rml_op_unary_params */
+        rml_op_unary_params sigmoid;
+
+        /** @see #RML_OP_SIN, #rml_op_unary_params */
+        rml_op_unary_params sin;
+
+        /** @see #RML_OP_SLICE, #rml_op_slice_params */
+        rml_op_slice_params slice;
+
+        /** @see #RML_OP_SOFTMAX, #rml_op_unary_params */
+        rml_op_unary_params softmax;
+
+        /** @see #RML_OP_SOFTPLUS, #rml_op_unary_params */
+        rml_op_unary_params softplux;
+
+        /** @see #RML_OP_SOFTSIGN, #rml_op_unary_params */
+        rml_op_unary_params softsign;
+
+        /** @see #RML_OP_SPACE_TO_DEPTH, #rml_op_space_to_depth_params */
+        rml_op_space_to_depth_params space_to_depth;
+
+        /** @see #RML_OP_SQRT, #rml_op_unary_params */
+        rml_op_unary_params sqrt;
+
+        /** @see #RML_OP_SQUEEZE, #rml_op_squeeze_params */
+        rml_op_squeeze_params squeeze;
+
+        /** @see #RML_OP_STACK, #rml_op_stack_params */
+        rml_op_stack_params stack;
+
+        /** @see #RML_OP_SUB, #rml_op_binary_params */
+        rml_op_binary_params sub;
+
+        /** @see #RML_OP_TAN, #rml_op_unary_params */
+        rml_op_unary_params tan;
+
+        /** @see #RML_OP_TANH, #rml_op_unary_params */
+        rml_op_unary_params tanh;
+
+        /** @see #RML_OP_THRESHOLDED_RELU, #rml_op_thresholded_relu_params */
+        rml_op_thresholded_relu_params thresholded_relu;
+
+        /** @see #RML_OP_TRANSPOSE, #rml_op_transpose_params */
+        rml_op_transpose_params transpose;
+
+        /** @see #RML_OP_UNSQUEEZE, #rml_op_unsqueeze_params */
+        rml_op_unsqueeze_params unsqueeze;
 
         rml_op_binary_params binary;
-        rml_op_pooling_2d_params pool2d;
+        rml_op_pool_2d_params pool_2d;
+        rml_op_pool_2d_global_params pool_2d_global;
         rml_op_unary_params unary;
     };
 
@@ -639,11 +1843,13 @@ RML_API_ENTRY rml_status rmlGetGraphNumInputs(rml_graph graph, size_t* num_input
  * @return RML_OK in case of success, RML_FAIL otherwise.
  *         To get more details in case of failure, call rmlGetLastError().
  */
-RML_API_ENTRY rml_status rmlGetGraphInputNames(rml_graph graph, size_t num_inputs, const char* names[]);
+RML_API_ENTRY rml_status rmlGetGraphInputNames(rml_graph graph,
+                                               size_t num_inputs,
+                                               const char* names[]);
 
 /**
- * Combines supplied graphs to a single graph connecting output and input of the neighbouring graphs.
- * So, graphs in different formats (i.e. TF and ONNX) can be combined into single graph.
+ * Combines supplied graphs to a single graph connecting output and input of the neighbouring
+ * graphs. So, graphs in different formats (i.e. TF and ONNX) can be combined into single graph.
  *
  * @param[in] head_graph        A graph to be inserted in tail_graph.
  * @param[in] tail_graph        A graph with a node to be replaced after connection.
@@ -668,7 +1874,9 @@ RML_API_ENTRY rml_status rmlConnectGraphs(rml_graph head_graph,
  * @return A valid operation handle in case of success, NULL otherwise.
  *         To get more details in case of failure, call rmlGetLastError().
  */
-RML_API_ENTRY rml_status rmlCreateOperation(rml_graph graph, const rml_op_desc* op_desc, rml_op* op);
+RML_API_ENTRY rml_status rmlCreateOperation(rml_graph graph,
+                                            const rml_op_desc* op_desc,
+                                            rml_op* op);
 
 /**
  * Creates immutable model from supplied graph.
@@ -679,7 +1887,9 @@ RML_API_ENTRY rml_status rmlCreateOperation(rml_graph graph, const rml_op_desc* 
  * @return A valid model handle in case of success, NULL otherwise.
  *         To get more details in case of failure, call rmlGetLastError().
  */
-RML_API_ENTRY rml_status rmlCreateModelFromGraph(rml_context context, rml_graph graph, rml_model* model);
+RML_API_ENTRY rml_status rmlCreateModelFromGraph(rml_context context,
+                                                 rml_graph graph,
+                                                 rml_model* model);
 
 /**
  * Releases a graph created with rmlCreateGraph() or rmlLoadgraph(), invalidates the handle.

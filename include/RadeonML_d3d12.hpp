@@ -26,14 +26,14 @@ THE SOFTWARE.
  * @brief Direct3D 12 interoperation API
  */
 
-#include "RadeonML.hpp"
-#include "RadeonML_d3d12.h"
+#include "rml/RadeonML.hpp"
+#include "rml/RadeonML_d3d12.h"
 
 #define RML_CHECK_STATUS(OP) ::rml::details::CheckStatus(OP == RML_OK, #OP)
 
 namespace rml {
 
-inline Context CreateContextFromD3DQueue(ID3D12CommandQueue* command_queue)
+inline Context CreateContextFromD3DQueue(void* command_queue /* ID3D12CommandQueue* */)
 {
     rml_context context = nullptr;
     RML_CHECK_STATUS(rmlCreateContextFromD3DQueue(command_queue, &context));
@@ -41,24 +41,24 @@ inline Context CreateContextFromD3DQueue(ID3D12CommandQueue* command_queue)
 }
 
 inline Tensor CreateTensorFromD3DResource(const Context& context,
-                                          const rml_tensor_info& info,
-                                          ID3D12Resource* resource)
+                                          void* resource /* ID3D12Resource* */,
+                                          const rml_tensor_info& info)
 {
     rml_tensor tensor = nullptr;
     RML_CHECK_STATUS(rmlCreateTensorFromD3DResource(context, resource, &info, &tensor));
     return Tensor(tensor);
 }
 
-inline ID3D12Resource* GetD3DResourceFromTensor(const Tensor& tensor)
+inline void* GetD3DResourceFromTensor(const Tensor& tensor)
 {
-    ID3D12Resource* resource = nullptr;
+    void* resource = nullptr;
     RML_CHECK_STATUS(rmlGetD3DResourceFromTensor(tensor, &resource));
-    return resource;
+    return resource /* ID3D12Resource* */;
 }
 
 inline void SetD3DCommandList(const Context& context,
-                              ID3D12GraphicsCommandList* command_list,
-                              ID3D12CommandAllocator* command_allocator)
+                              void* command_list /* ID3D12GraphicsCommandList* */,
+                              void* command_allocator /* ID3D12CommandAllocator* */)
 {
     RML_CHECK_STATUS(rmlSetD3DCommandList(context, command_list, command_allocator));
 }

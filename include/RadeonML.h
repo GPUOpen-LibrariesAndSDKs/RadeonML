@@ -103,6 +103,7 @@ typedef enum _rml_status
     RML_ERROR_INTERNAL = -170,        /**< An internal library error. */
     RML_ERROR_MODEL_NOT_READY = -180, /**< A model is not ready for an operation. */
     RML_ERROR_NOT_IMPLEMENTED = -190, /**< Functionality is not implemented yet. */
+    RML_ERROR_OUT_OF_MEMORY = -200,   /**< Memory allocation is failed. */
 
 } rml_status;
 
@@ -175,7 +176,10 @@ typedef enum _rml_access_mode
  */
 typedef struct _rml_memory_info
 {
-    size_t gpu_total;
+    /**
+     * Total amount of allocated GPU memory.
+     */
+    size_t gpu_total; 
 
 } rml_memory_info;
 
@@ -184,8 +188,19 @@ typedef struct _rml_memory_info
  */
 typedef struct _rml_tensor_info
 {
+    /**
+     * Tensor data type.
+     */
     rml_dtype dtype;
+
+    /**
+     * Physical tensor data layout.
+     */
     rml_layout layout;
+
+    /**
+     * Tensor shape where axes order must correspond to the data layout.
+     */
     uint32_t shape[RML_TENSOR_MAX_RANK];
 
 } rml_tensor_info;
@@ -200,7 +215,7 @@ typedef struct _rml_tensor_info
  *
  * @param[out] context A pointer to a resulting context handle.
  *
- * @return A valid model handle in case of success and status:
+ * @return A valid context handle in case of success and status:
  * - #RML_OK if the operation is successful,
  * - #RML_ERROR_BAD_PARAMETER if the @p context is NULL,
  * - #RML_ERROR_INTERNAL in case of an internal error.
@@ -234,7 +249,7 @@ RML_API_ENTRY void rmlReleaseContext(rml_context context);
  * - #RML_ERROR_INTERNAL in case of an internal error.
  *
  * To get more details in case of failure, call rmlGetLastError().
- * The context should be released with rmlReleaseTensor().
+ * The tensor should be released with rmlReleaseTensor().
  */
 RML_API_ENTRY rml_status rmlCreateTensor(rml_context context,
                                          const rml_tensor_info* info,
@@ -242,12 +257,12 @@ RML_API_ENTRY rml_status rmlCreateTensor(rml_context context,
                                          rml_tensor* tensor);
 
 /**
- * Returns a tensor description.
+ * Returns a tensor information.
  *
  * @param[in]  tensor A valid tensor handle.
  * @param[out] info   A pointer to a resulting info structure.
  *
- * @return A valid tensor handle in case of success and status:
+ * @return Tensor information in case of success and status:
  * - #RML_OK if the operation is successful,
  * - #RML_ERROR_BAD_PARAMETER if @p tensor is invalid or @p info is NULL.
  *
@@ -379,7 +394,7 @@ RML_API_ENTRY rml_status rmlGetModelInputInfo(rml_model model,
  *
  * @param[in] model A valid model handle.
  * @param[in] name  An input node name, in ASCII encoding.
- * @param[in] info  A pointer to a resulting input info structure.
+ * @param[in] info  A pointer to a input info structure.
  *
  * @return Status:
  * - #RML_OK if the operation is successful,
@@ -492,8 +507,8 @@ RML_API_ENTRY rml_status rmlSetModelOutput(rml_model model, const char* name, rm
 RML_API_ENTRY rml_status rmlInfer(rml_model model);
 
 /**
- * Releases a model loaded with rmlLoadModel() or created with rmlCreateModel(), invalidates the
- * handle.
+ * Releases a model loaded with rmlLoadModel() or created with rmlCreateModelFromGraph(), 
+ * invalidates the handle.
  *
  * @param[in] model A valid model handle.
  */
