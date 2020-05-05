@@ -24,7 +24,7 @@
 
 * [Loading a model from a file (C)](samples/load_model.c)
 * [Loading a model from a file (C++)](samples/load_model.cpp)
-* [graph operationt example (C++)](samples/graph_ops.cpp
+* [graph operationt example (C++)](samples/graph_ops.cpp)
 
 ## 2.1. System requirements
 * Windows 10 19H1 or later (for DirectML backend)
