@@ -3,25 +3,32 @@
 ## 1. C/C++ API
 
 
-* [RadeonML.h](include/RadeonML.h) - main _C_ API
-* [RadeonML.hpp](include/RadeonML.hpp) - _C++_ wrappers
-* [RadeonML_cl.h](include/RadeonML_cl.h) - _C_ functions for _OpenCL_ interop
-* [RadeonML_cl.hpp](include/RadeonML_d3d12.hpp) - _C++_ wrappers for _OpenCL_ interop
-* [RadeonML_d3d12.h](include/RadeonML_d3d12.h) - _C_ functions for _Direct3D 12_ interop
-* [RadeonML_d3d12.hpp](include/RadeonML_d3d12.hpp) - _C++_ wrappers for _Direct3D 12_ interop
-* [RadeonML_tf.h](include/RadeonML_tf.h) - _C_ functions for _TensorFlow_ interop
-* [RadeonML_tf.hpp](include/RadeonML_tf.hpp) - _C++_ wrappers for _TensorFlow_ interop
-* [RadeonML_mps.h](include/RadeonML_mps.h) - _C_ functions for _MPS_ interop
+* [RadeonML.h](rml/include/rml/RadeonML.h) - main C API
+* [RadeonML.hpp](rml/include/rml/RadeonML.hpp) - main and graph manipulation C++ API
+* [RadeonML_cl.h](rml/include/rml/RadeonML_cl.h) - OpenCL interoperation C API
+* [RadeonML_cl.hpp](rml/include/rml/RadeonML_cl.hpp) - OpenCL interoperation C++ API
+* [RadeonML_d3d12.h](rml/include/rml/RadeonML_d3d12.h) - Direct3D 12 interoperation C API
+* [RadeonML_d3d12.hpp](rml/include/rml/RadeonML_d3d12.hpp) - Direct3D 12 interoperation C++ API
+* [RadeonML_dml.h](rml/include/rml/RadeonML_dml.h) - DirectML interoperation C API
+* [RadeonML_dml.hpp](rml/include/rml/RadeonML_dml.hpp) - DirectML interoperation C++ API
+* [RadeonML_graph.h](rml/include/rml/RadeonML.h) - graph manipulation C API
+* [RadeonML_miopen.h](rml/include/rml/RadeonML_miopen.h) - MIOpen interoperation C API
+* [RadeonML_miopen.hpp](rml/include/rml/RadeonML_miopen.hpp) - MIOpen interoperation C++ API
+* [RadeonML_mtl.h](rml/include/rml/RadeonML_mtl.h) - Metal interoperation C API
+* [RadeonML_mtl.hpp](rml/include/rml_internal/RadeonML_mtl.hpp) - Metal interoperation C++ API
+* [RadeonML_internals.h](rml/include/rml_internal/RadeonML_internals.h) - API for internal usage and experiments
+* [RadeonML_internals.hpp](rml/include/rml_internal/RadeonML_internals.hpp) - API for internal usage and experiments
 
 
 ### Code examples
 
 * [Loading a model from a file (C)](samples/load_model.c)
 * [Loading a model from a file (C++)](samples/load_model.cpp)
-
+* [graph operationt example (C++)](samples/graph_ops.cpp
 
 ## 2.1. System requirements
 * Windows 10 19H1 or later (for DirectML backend)
+* Windows 7 wil use the MIOpen backend
 * Ubuntu 18.04
 * CentOS/RHEL 7.6, 7.7
 * OSX Mojave and Catalina
@@ -35,27 +42,11 @@
     * rmlCreateOperation
     * rmlCreateModel
     * rmlReleaseGraph
-* Apple MPS backend:
-    * Add
-    * Concat
-    * Exp
-    * Div
-    * Min
-    * Max
-    * Conv2D
-    * MaxPool2D
-    * Relu
-    * Reshape
-    * Slice
-    * Concat
-    * Shape
-    * Sub
-    * Upsample
 * Multiple inputs/outputs support
 
 ## 3.2 Features supported by OS
 * Windows DirectML supports our denoisers, upscalers and common models like resnet, VGG etc..
-* Miopen backend for Windows and Linux only supports our denoisers and upscalers
+* Miopen backend for Windows and Linux only supports our denoisers and upscalers. When creating a RML context if DML is not supported we will fallback automatically to MIOpen
 * MPS backend only supports our denoisers
 
 * Model supported by the different backend
