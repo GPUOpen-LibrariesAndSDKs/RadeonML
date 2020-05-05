@@ -35,14 +35,12 @@
 
 ## 3.1 Features supported
 * ONNX support (opset 6-11)
-* Graph manipulation API
-    * rmlLoadGraph
-    * rmlConnectGraphs
-    * rmlCreateGraph
-    * rmlCreateOperation
-    * rmlCreateModel
-    * rmlReleaseGraph
-* Multiple inputs/outputs support
+* TensforFlow frozen graph pb files
+* FP32 and FP16 for ONNX
+
+    
+For more information, see documentation at this link 
+https://radeon-pro.github.io/RadeonProRenderDocs/index.html
 
 ## 3.2 Features supported by OS
 * Windows DirectML supports our denoisers, upscalers and common models like resnet, VGG etc..
