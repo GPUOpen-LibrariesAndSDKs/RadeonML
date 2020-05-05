@@ -40,7 +40,7 @@
 
     
 For more information, see documentation at this link 
-https://radeon-pro.github.io/RadeonProRenderDocs/index.html
+https://radeon-pro.github.io/RadeonProRenderDocs/rml/about.html
 
 ## 3.2 Features supported by OS
 * Windows DirectML supports our denoisers, upscalers and common models like resnet, VGG etc..
