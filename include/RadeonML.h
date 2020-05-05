@@ -134,9 +134,6 @@ typedef enum _rml_data_layout
     RML_LAYOUT_NC = 221, /**< Tensor layout for a two dimensional tensor with data stored in
                           * the row-major order, where C - number of elements in a column,
                           * N - number of elements in a row. */
-    RML_LAYOUT_CN = 222, /**< Tensor layout for a two dimensional tensor with data stored in
-                          * the column-major order, where C - number of elements in a column,
-                          * N - number of elements in a row. */
 
     RML_LAYOUT_CHW = 230, /**< Tensor layout for a single image in planar format
                            * with the following dimensions: number of channels, height, width. */

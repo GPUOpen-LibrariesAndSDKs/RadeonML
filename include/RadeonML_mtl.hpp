@@ -41,13 +41,20 @@ inline Context CreateContextFromMTLQueue(void* queue /* id<MTLCommandQueue> */)
 }
 
 inline Tensor CreateTensorFromMTLBuffer(const rml::Context& context,
-                                                      void* buffer,
-                                                      const rml_tensor_info& info,
-                                                      rml_access_mode mode)
+                                        void* buffer,
+                                        const rml_tensor_info& info,
+                                        rml_access_mode mode)
 {
     rml_tensor tensor = nullptr;
     RML_CHECK_STATUS(rmlCreateTensorFromMTLBuffer(context, buffer, &info, mode, &tensor));
     return Tensor(tensor);
+}
+
+inline void* GetMTLBufferFromTensor(const Tensor& tensor)
+{
+    void* buffer = nullptr;
+    RML_CHECK_STATUS(rmlGetMTLBufferFromTensor(tensor, &buffer));
+    return buffer /* id<MTLBuffer> */;
 }
 
 } // namespace rml

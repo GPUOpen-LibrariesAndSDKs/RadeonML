@@ -50,6 +50,13 @@ inline Tensor CreateTensorFromClBuffer(const Context& context,
     return Tensor(tensor);
 }
 
+inline void* GetClBufferFromTensor(const Tensor& tensor)
+{
+    void* buffer = nullptr;
+    RML_CHECK_STATUS(rmlGetClBufferFromTensor(tensor, &buffer));
+    return buffer /* cl_mem */;
+}
+
 } // namespace rml
 
 #undef RML_CHECK_STATUS

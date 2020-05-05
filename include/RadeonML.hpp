@@ -150,7 +150,7 @@ public:
             throw std::runtime_error("Bad source data size: " + std::to_string(src.size()) +
                                      ", expected " + std::to_string(size));
         }
-        std::memcpy(ptr, src.data(), size);
+        std::memcpy(ptr, src.data(), byte_size);
         Unmap(ptr);
     }
 
@@ -161,7 +161,7 @@ public:
         void* ptr = Map(&byte_size);
         size_t size = byte_size / sizeof(typename T::value_type);
         dst.resize(size); // TODO: Exception safety
-        std::memcpy(dst.data(), ptr, size);
+        std::memcpy(dst.data(), ptr, byte_size);
         Unmap(ptr);
     }
 

@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 *****************************************************************************/
-#include "RadeonML.hpp"
+#include "rml/RadeonML.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -87,7 +87,6 @@ int main() try
     rml::Tensor output = context.CreateTensor(output_info, RML_ACCESS_MODE_READ_ONLY);
 
     // Fill in input tensors
-
     size_t data_size = 0;
     void* data = color.Map(&data_size);
     std::memset(data, 1, data_size); /* Fill in something useful */
@@ -105,7 +104,6 @@ int main() try
     data = output.Map(&data_size);
 
     // Use the output data
-
     output.Unmap(data);
 }
 catch (const std::exception& e)

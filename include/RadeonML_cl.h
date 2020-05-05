@@ -73,6 +73,21 @@ RML_API_ENTRY rml_status rmlCreateTensorFromClBuffer(rml_context context,
                                                      rml_access_mode mode,
                                                      rml_tensor* tensor);
 
+/**
+ * Get underlying OpenCL buffer from a tensor.
+ *
+ * @param[in]  tensor   A valid tensor handle.
+ * @param[out] buffer   A pointer to a resulting OpenCL buffer (cl_mem).
+ *
+ * @return A non-NULL OpenCL buffer pointer in case of success and status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p tensor is invalid or @p buffer is NULL.
+ *
+ * To get more details in case of failure, call rmlGetLastError().
+ * The resulting buffer is reference counted by the @p tensor.
+ */
+RML_API_ENTRY rml_status rmlGetClBufferFromTensor(rml_tensor tensor, void** buffer /* cl_mem* */);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

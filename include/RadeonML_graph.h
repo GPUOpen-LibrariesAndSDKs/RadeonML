@@ -54,7 +54,7 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
+     * - MIOpen: Yes.
      * - Apple MPS: No.
      *
      * @see rml_op_desc#abs, #rml_op_unary_params
@@ -95,7 +95,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#asin, #rml_op_unary_params
      */
-    RML_OP_ASIN = 1060,
+    RML_OP_ASIN = 1040,
 
     /**
      * @brief Calculates arctangent of an input tensor, element-wise.
@@ -107,7 +107,19 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#atan, #rml_op_unary_params
      */
-    RML_OP_ATAN = 1070,
+    RML_OP_ATAN = 1050,
+
+    /**
+     * @brief Calculates average between input tensors, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#avg, #rml_op_unary_params
+     */
+    RML_OP_AVG = 1060,
 
     /**
      * @brief Performs batch normalization of an input tensor.
@@ -119,7 +131,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#batch_norm, #rml_op_batch_norm_params
      */
-    RML_OP_BATCH_NORM = 1090,
+    RML_OP_BATCH_NORM = 1070,
 
     /**
      * @brief Adds bias to an input tensor.
@@ -131,7 +143,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#bias_add, #rml_op_bias_add_params
      */
-    RML_OP_BIAS_ADD = 1100,
+    RML_OP_BIAS_ADD = 1080,
 
     /**
      * @brief Casts elements of an input tensor to a specified type.
@@ -143,7 +155,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#cast, #rml_op_cast_params
      */
-    RML_OP_CAST = 1110,
+    RML_OP_CAST = 1090,
 
     /**
      * @brief Ceils elements of an input tensor.
@@ -155,7 +167,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#ceil, #rml_op_unary_params
      */
-    RML_OP_CEIL = 1120,
+    RML_OP_CEIL = 1100,
 
     /**
      * @brief Limits input tensor values within a specified range.
@@ -167,7 +179,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#clip, #rml_op_clip_params
      */
-    RML_OP_CLIP = 1140,
+    RML_OP_CLIP = 1120,
 
     /**
      * @brief Concatenates input tensors into a single tensor along a specified axis.
@@ -179,7 +191,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#concat, #rml_op_concat_params
      */
-    RML_OP_CONCAT = 1150,
+    RML_OP_CONCAT = 1130,
 
     /**
      * @brief Stores specified tensor data.
@@ -191,7 +203,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#constant, #rml_op_const_params
      */
-    RML_OP_CONST = 1160,
+    RML_OP_CONST = 1140,
 
     /**
      * @brief Performs 2D convolution of an input tensor.
@@ -203,7 +215,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#conv_2d, #rml_op_conv_2d_params
      */
-    RML_OP_CONV_2D = 1190,
+    RML_OP_CONV_2D = 1170,
 
     /**
      * @brief Performs depthwise 2D convolution of an input tensor.
@@ -215,7 +227,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#conv_2d_depthwise, #rml_op_conv_2d_params
      */
-    RML_OP_CONV_2D_DEPTHWISE = 1200,
+    RML_OP_CONV_2D_DEPTHWISE = 1180,
 
     /**
      * @brief Performs transposed 2D convolution of an input tensor.
@@ -227,7 +239,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#conv_2d_transpose, #rml_op_conv_2d_transpose_params
      */
-    RML_OP_CONV_2D_TRANSPOSE = 1210,
+    RML_OP_CONV_2D_TRANSPOSE = 1190,
 
     /**
      * @brief Calculates cosine of an input tensor, element-wise.
@@ -239,7 +251,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#cos, #rml_op_unary_params
      */
-    RML_OP_COS = 1240,
+    RML_OP_COS = 1220,
 
     /**
      * @brief Rearranges input tensor data from channels into blocks of spatial data
@@ -251,7 +263,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#depth_to_space, #rml_op_depth_to_space_params
      */
-    RML_OP_DEPTH_TO_SPACE = 1250,
+    RML_OP_DEPTH_TO_SPACE = 1230,
 
     /**
      * @brief Divides input tensors, element-wise.
@@ -263,19 +275,19 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#div, #rml_op_binary_params
      */
-    RML_OP_DIV = 1270,
+    RML_OP_DIV = 1250,
 
     /**
      * @brief Applies ELU activation to an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
+     * - MIOpen: Yes.
      * - Apple MPS: No.
      *
      * @see rml_op_desc#elu, #rml_op_elu_params
      */
-    RML_OP_ELU = 1290,
+    RML_OP_ELU = 1270,
 
     /**
      * @brief Calculates exponent of an input tensor, element-wise.
@@ -287,7 +299,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#exp, #rml_op_unary_params
      */
-    RML_OP_EXP = 1300,
+    RML_OP_EXP = 1280,
 
     /**
      * @brief Flattens an input tensor into a 2D matrix.
@@ -299,7 +311,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#flatten, #rml_op_unary_params
      */
-    RML_OP_FLATTEN = 1310,
+    RML_OP_FLATTEN = 1290,
 
     /**
      * @brief Floors elements of an input tensor.
@@ -311,7 +323,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#floor, #rml_op_unary_params
      */
-    RML_OP_FLOOR = 1320,
+    RML_OP_FLOOR = 1300,
 
     /**
      * @brief Calculates gemm of input tensors, element-wise.
@@ -323,7 +335,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#gemm, #rml_op_gemm_params
      */
-    RML_OP_GEMM = 1340,
+    RML_OP_GEMM = 1320,
 
     /**
      * @brief Identity operator.
@@ -335,7 +347,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#identity, #rml_op_unary_params
      */
-    RML_OP_IDENTITY = 1350,
+    RML_OP_IDENTITY = 1330,
 
     /**
      * @brief Applies Leaky ReLU activation to an input tensor, element-wise.
@@ -347,7 +359,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#leaky_relu, #rml_op_leaky_relu_params
      */
-    RML_OP_LEAKY_RELU = 1360,
+    RML_OP_LEAKY_RELU = 1340,
 
     /**
      * @brief Performs local response normalization of an input tensor.
@@ -359,7 +371,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#local_response_norm, #rml_op_local_response_norm
      */
-    RML_OP_LOCAL_RESPONSE_NORM = 1370,
+    RML_OP_LOCAL_RESPONSE_NORM = 1350,
 
     /**
      * @brief Calculates LogSoftMax of an input tensor, element-wise.
@@ -371,7 +383,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#log_softmax, #rml_op_unary_params
      */
-    RML_OP_LOG_SOFTMAX = 1380,
+    RML_OP_LOG_SOFTMAX = 1360,
 
     /**
      * @brief Calculates natural logarithm of an input tensor, element-wise.
@@ -383,7 +395,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#logn, #rml_op_unary_params
      */
-    RML_OP_LOGN = 1390,
+    RML_OP_LOGN = 1370,
 
     /**
      * @brief Calculates maximum of input tensors, element-wise.
@@ -395,7 +407,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#max, #rml_op_binary_params
      */
-    RML_OP_MAX = 1400,
+    RML_OP_MAX = 1380,
 
     /**
      * @brief Calculates minimum of input tensors, element-wise.
@@ -407,7 +419,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#min, #rml_op_binary_params
      */
-    RML_OP_MIN = 1410,
+    RML_OP_MIN = 1390,
 
     /**
      * @brief Multiplies input tensors, element-wise.
@@ -419,7 +431,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#mul, #rml_op_binary_params
      */
-    RML_OP_MUL = 1420,
+    RML_OP_MUL = 1400,
 
     /**
      * @brief Calculates neg of the input tensor, element-wise.
@@ -431,7 +443,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#neg, #rml_op_unary_params
      */
-    RML_OP_NEG = 1430,
+    RML_OP_NEG = 1410,
 
     /**
      * @brief Performs Parametric ReLU activation of an input tensor, elsement-wise.
@@ -443,7 +455,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#parametric_relu, #rml_op_binary_params
      */
-    RML_OP_PARAMETRIC_RELU = 1440,
+    RML_OP_PARAMETRIC_RELU = 1420,
 
     /**
      * @brief Special operation that holds information about input data.
@@ -455,7 +467,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#placeholder, #rml_op_placeholder_params
      */
-    RML_OP_PLACEHOLDER = 1450,
+    RML_OP_PLACEHOLDER = 1430,
 
     /**
      * @brief Performs 2D average pooling of an input tensor.
@@ -467,7 +479,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#pool_2d_avg, #rml_op_pool_2d_params
      */
-    RML_OP_POOL_2D_AVG = 1490,
+    RML_OP_POOL_2D_AVG = 1470,
 
     /**
      * @brief Performs 2D global average pooling of an input tensor.
@@ -479,7 +491,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#pool_2d_global_avg, #rml_op_pool_2d_global_params
      */
-    RML_OP_POOL_2D_GLOBAL_AVG = 1500,
+    RML_OP_POOL_2D_GLOBAL_AVG = 1480,
 
     /**
      * @brief Performs 2D max pooling of an input tensor.
@@ -491,7 +503,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#pool_2d_max, #rml_op_pool_2d_params
      */
-    RML_OP_POOL_2D_MAX = 1510,
+    RML_OP_POOL_2D_MAX = 1490,
 
     /**
      * @brief
@@ -503,7 +515,19 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#pool_2d_min, #rml_op_pool_2d_params
      */
-    RML_OP_POOL_2D_MIN = 1520,
+    RML_OP_POOL_2D_MIN = 1500,
+
+    /**
+     * @brief
+     *
+     * Backend support:
+     * - DirectML: No. No backend support.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#pow, #rml_op_pow_params
+     */
+    RML_OP_POW = 1540,
 
     /**
      * @brief Calculates reciprocal of an input tensor, element-wise.
@@ -515,7 +539,152 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#recip, #rml_op_unary_params
      */
-    RML_OP_RECIP = 1590,
+    RML_OP_RECIP = 1560,
+
+    /**
+     * @brief Calculates a reduction function that computes the mean of the input tensor,
+     * element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_add
+     */
+    RML_OP_REDUCE_ADD = 1570,
+
+     /**
+     * @brief Calculates sum square of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_add_square
+     */
+    RML_OP_REDUCE_ADD_SQUARE = 1580,
+
+    /**
+     * @brief Calculates maximum elements indices of input tensor elements along provided axis.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_argmax
+     */
+    RML_OP_REDUCE_ARGMAX = 1590,
+
+    /**
+     * @brief Calculates minimum elements indices of input tensor elements along provided axis.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_argmin
+     */
+    RML_OP_REDUCE_ARGMIN = 1600,
+
+     /**
+     * @brief Calculates average of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_avg
+     */
+    RML_OP_REDUCE_AVG = 1610,
+
+     /**
+     * @brief Calculates L1 norm of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_l1
+     */
+    RML_OP_REDUCE_L1 = 1620,
+
+     /**
+     * @brief Calculates L2 norm of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_avg
+     */
+    RML_OP_REDUCE_L2 = 1630,
+
+     /**
+     * @brief Calculates log sum of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_avg
+     */
+    RML_OP_REDUCE_LOGN_ADD = 1640,
+
+     /**
+     * @brief Calculates log sum exponent of input tensor element along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_min
+     */
+    RML_OP_REDUCE_LOGN_ADD_EXP = 1650,
+
+     /**
+     * @brief Calculates maximum of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_max
+     */
+    RML_OP_REDUCE_MAX = 1660,
+
+     /**
+     * @brief Calculates minimum of input tensor elements along provided axes.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_max
+     */
+    RML_OP_REDUCE_MIN = 1670,
+
+     /**
+     * @brief Calculates product of input tensor elements along provided axes..
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#reduce_max
+     */
+    RML_OP_REDUCE_MUL = 1680,
 
     /**
      * @brief Applies ReLU activation to an input tensor, element-wise.
@@ -527,7 +696,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#relu, #rml_op_unary_params
      */
-    RML_OP_RELU = 1700,
+    RML_OP_RELU = 1690,
 
     /**
      * @brief Applies ReLU6 activation to an input tensor, element-wise.
@@ -539,7 +708,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#relu6, #rml_op_unary_params
      */
-    RML_OP_RELU6 = 1710,
+    RML_OP_RELU6 = 1700,
 
     /**
      * @brief Changes the shape of an input tensor without changing tensor data.
@@ -551,7 +720,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#reshape, #rml_op_reshape_params
      */
-    RML_OP_RESHAPE = 1720,
+    RML_OP_RESHAPE = 1710,
 
     /**
      * @brief Resizes an input tensor along spatial dims using the nearest neighbor algorithm.
@@ -563,7 +732,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#resize_2d_nearest, #rml_op_resize_2d_params
      */
-    RML_OP_RESIZE_2D_NEAREST = 1730,
+    RML_OP_RESIZE_2D_NEAREST = 1720,
 
     /**
      * @brief Calculates reciprocal of square root of an input tensor, element-wise.
@@ -575,7 +744,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#rsqrt, #rml_op_unary_params
      */
-    RML_OP_RSQRT = 1780,
+    RML_OP_RSQRT = 1770,
 
     /**
      * @brief Applies Scaled ELU activation to an input tensor, element-wise.
@@ -587,7 +756,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#selu, #rml_op_selu_params
      */
-    RML_OP_SELU = 1790,
+    RML_OP_SELU = 1780,
 
     /**
      * @brief Outputs the shape of an input tensor.
@@ -599,7 +768,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#shape, #rml_op_unary_params
      */
-    RML_OP_SHAPE = 1800,
+    RML_OP_SHAPE = 1790,
 
     /**
      * @brief Applies Sigmoid activation of the input tensor, element-wise.
@@ -611,7 +780,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#sigmoid, #rml_op_unary_params
      */
-    RML_OP_SIGMOID = 1810,
+    RML_OP_SIGMOID = 1800,
 
     /**
      * @brief Calculates sine of an input tensor, element-wise.
@@ -623,7 +792,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#sin, #rml_op_unary_params
      */
-    RML_OP_SIN = 1820,
+    RML_OP_SIN = 1810,
 
     /**
      * @brief Produces a strided slice of an input tensor along multiple axes.
@@ -635,7 +804,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#slice, #rml_op_slice_params
      */
-    RML_OP_SLICE = 1830,
+    RML_OP_SLICE = 1820,
 
     /**
      * @brief Applies Softmax activation to an input tensor, element-wise.
@@ -647,7 +816,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#softmax, #rml_op_unary_params
      */
-    RML_OP_SOFTMAX = 1840,
+    RML_OP_SOFTMAX = 1830,
 
     /**
      * @brief Applies Softplus activation to an input tensor, element-wise.
@@ -659,7 +828,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#softplux, #rml_op_unary_params
      */
-    RML_OP_SOFTPLUS = 1860,
+    RML_OP_SOFTPLUS = 1850,
 
     /**
      * @brief Applies Softsign activation to an input tensor, element-wise.
@@ -671,7 +840,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#softsign, #rml_op_unary_params
      */
-    RML_OP_SOFTSIGN = 1870,
+    RML_OP_SOFTSIGN = 1860,
 
     /**
      * @brief Rearranges blocks of spatial tensor data into channels.
@@ -683,7 +852,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#space_to_depth, #rml_op_space_to_depth_params
      */
-    RML_OP_SPACE_TO_DEPTH = 1880,
+    RML_OP_SPACE_TO_DEPTH = 1870,
 
     /**
      * @brief Calculates square root of an input tensor, element-wise.
@@ -695,7 +864,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#sqrt, #rml_op_unary_params
      */
-    RML_OP_SQRT = 1900,
+    RML_OP_SQRT = 1890,
 
     /**
      * @brief Removes single-dimensional entries from the shape of a tensor.
@@ -707,7 +876,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#squeeze, #rml_op_squeeze_params
      */
-    RML_OP_SQUEEZE = 1910,
+    RML_OP_SQUEEZE = 1900,
 
     /**
      * @brief Stacks a list of tensors with rank R into single tensor with rank R+1.
@@ -719,7 +888,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#stack, #rml_op_stack_params
      */
-    RML_OP_STACK = 1920,
+    RML_OP_STACK = 1910,
 
     /**
      * @brief Subtracts input tensors, element-wise.
@@ -731,7 +900,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#sub, #rml_op_binary_params
      */
-    RML_OP_SUB = 1930,
+    RML_OP_SUB = 1920,
 
     /**
      * @brief Calculate tangent of the input tensor, element-wise.
@@ -743,7 +912,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#tan, #rml_op_unary_params
      */
-    RML_OP_TAN = 1940,
+    RML_OP_TAN = 1930,
 
     /**
      * @brief Applies hyperbolic tangent activation to an input tensor, element-wise.
@@ -755,7 +924,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#tanh, #rml_op_unary_params
      */
-    RML_OP_TANH = 1950,
+    RML_OP_TANH = 1940,
 
     /**
      * @brief Applies Thresholded ReLU activation of the input tensor, element-wise.
@@ -767,7 +936,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#thresholded_relu, #rml_op_thresholded_relu_params
      */
-    RML_OP_THRESHOLDED_RELU = 1960,
+    RML_OP_THRESHOLDED_RELU = 1950,
 
     /**
      * @brief Transposes an input tensor.
@@ -779,7 +948,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#transpose, #rml_op_transpose_params
      */
-    RML_OP_TRANSPOSE = 1980,
+    RML_OP_TRANSPOSE = 1970,
 
     /**
      * @brief Inserts dimensions of size 1 at specified axis indices.
@@ -791,7 +960,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#unsqueeze, #rml_op_unsqueeze_params
      */
-    RML_OP_UNSQUEEZE = 1990,
+    RML_OP_UNSQUEEZE = 1980,
 
 } rml_op_type;
 
@@ -1208,7 +1377,7 @@ typedef struct _rml_op_pool_2d_params
                                      Only make sense if padding type is RML_PADDING_EXPLICIT.
                                      If not present, the padding defaults to 0 along end of each
                                      spatial axis. */
-    rml_bool ceil_mode;         /**< Whether to use ceil or floor (default) to compute the output shape. */
+    rml_bool ceil_mode;     /**< Whether to use ceil or floor (default) to compute the output shape. */
 
 } rml_op_pool_2d_params;
 
@@ -1225,6 +1394,22 @@ typedef struct _rml_op_pool_2d_global_params
 } rml_op_pool_2d_global_params;
 
 /**
+ * @brief The pow operation parameters
+ */
+typedef struct _rml_op_pow_params
+{
+	/**
+	 * Operation that outputs tensor containing input data
+	 */
+    rml_op input;
+	/**
+	 * Operation that outputs tensor containing pow data
+	 */
+    rml_op pow;
+
+} rml_op_pow_params;
+
+/**
  * @brief Parameters for #RML_OP_SPACE_TO_DEPTH operation.
  *
  * RML_OP_SPACE_TO_DEPTH operation rearranges blocks of spatial tensor data into channels.
@@ -1232,6 +1417,7 @@ typedef struct _rml_op_pool_2d_global_params
  * where values from the height and width dimensions are moved to the channel dimension. 
  * E.g., rearranges tensor of shape (N, C, H * bs, W * bs) to a tensor of shape (N, C * bs^2, H, W).
  */
+
 typedef struct _rml_op_space_to_depth_params
 {
     /**
@@ -1464,7 +1650,21 @@ typedef struct _rml_op_slice_params
 } rml_op_slice_params;
 
 /**
- * @brief Parameters for #RML_OP_TRANSPOSE operation.
+* @brief Params for reduce operation such as: RML_OP_REDUCE_AVG, RML_OP_REDUCE_L1, RML_OP_REDUCE_L2,
+*  RML_OP_REDUCE_MUL, RML_OP_REDUCE_LOGN_ADD, RML_OP_REDUCE_LOGN_ADD_EXP, 
+*  RML_OP_REDUCE_MAX, RML_OP_REDUCE_MIN, RML_OP_REDUCE_SUM_SQUARE
+*/
+typedef struct _rml_op_reduce_params
+{
+    rml_op input;
+    size_t num_axes;
+    const int32_t* axes;
+    rml_bool keep_dims;
+
+} rml_op_reduce_params;
+
+/**
+ * @brief Parameters for RML_OP_TRANSPOSE operation.
  *
  * Transpose the @p input tensor similar to numpy.transpose. For example, when perm=(1, 0, 2), given an
  * input tensor of shape (1, 2, 3), the output shape will be (2, 1, 3).
@@ -1622,6 +1822,9 @@ typedef struct _rml_op_desc
         /** @see #RML_OP_ATAN, #rml_op_unary_params */
         rml_op_unary_params atan;
 
+        /** @see #RML_OP_AVG, #rml_op_binary_params */
+        rml_op_binary_params avg;
+
         /** @see #RML_OP_BATCH_NORM, #rml_op_batch_norm_params */
         rml_op_batch_norm_params batch_norm;
 
@@ -1721,6 +1924,9 @@ typedef struct _rml_op_desc
         /** @see #RML_OP_POOL_2D_MIN, #rml_op_pool_2d_params */
         rml_op_pool_2d_params pool_2d_min;
 
+        /** @see #RML_OP_POW, #rml_op_pow_params */
+        rml_op_pow_params pow;
+
         /** @see #RML_OP_RECIP, #rml_op_unary_params */
         rml_op_unary_params recip;
 
@@ -1769,6 +1975,42 @@ typedef struct _rml_op_desc
         /** @see #RML_OP_SQRT, #rml_op_unary_params */
         rml_op_unary_params sqrt;
 
+        /** @see #RML_OP_REDUCE_ARGMAX, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_argmax;
+
+        /** @see #RML_OP_REDUCE_ARGMIN, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_argmin;
+
+        /** @see #RML_OP_REDUCE_AVG, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_avg;
+
+        /** @see #RML_OP_REDUCE_MUL, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_mul;
+
+        /** @see #RML_OP_REDUCE_L1, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_l1;
+
+        /** @see #RML_OP_REDUCE_L2, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_l2;
+
+        /** @see #RML_OP_REDUCE_LOG_SUM, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_logn_add;
+
+        /** @see #RML_OP_REDUCE_LOG_SUM_EXP, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_logn_add_exp;
+
+        /** @see #RML_OP_REDUCE_MAX, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_max;
+
+        /** @see #RML_OP_REDUCE_MIN, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_min;
+
+        /** @see #RML_OP_REDUCE_SUM, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_add;
+
+        /** @see #RML_OP_REDUCE_SUM_SQUARE, #rml_op_reduce_params */
+        rml_op_reduce_params reduce_add_square;
+
         /** @see #RML_OP_SQUEEZE, #rml_op_squeeze_params */
         rml_op_squeeze_params squeeze;
 
@@ -1797,6 +2039,7 @@ typedef struct _rml_op_desc
         rml_op_pool_2d_params pool_2d;
         rml_op_pool_2d_global_params pool_2d_global;
         rml_op_unary_params unary;
+        rml_op_reduce_params reduce;
     };
 
 } rml_op_desc;

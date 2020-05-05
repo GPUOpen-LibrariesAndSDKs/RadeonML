@@ -74,7 +74,7 @@ RML_API_ENTRY rml_status rmlCreateTensorFromD3DResource(rml_context context,
  * Get underlying Direct3D 12 resource from a tensor.
  *
  * @param[in]  tensor   A valid tensor handle.
- * @param[out] resource A pointer to a resulting resourcve pointer.
+ * @param[out] resource A pointer to a resulting resource pointer (ID3D12Resource*).
  *
  * @return A non-NULL resource pointer in case of success and status:
  * - #RML_OK if the operation is successful,
