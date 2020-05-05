@@ -24,11 +24,11 @@
 
 * [Loading a model from a file (C)](samples/load_model.c)
 * [Loading a model from a file (C++)](samples/load_model.cpp)
-* [graph operationt example (C++)](samples/graph_ops.cpp)
+* [graph operation example (C++)](samples/graph_ops.cpp)
 
 ## 2.1. System requirements
 * Windows 10 19H1 or later (for DirectML backend)
-* Windows 7 wil use the MIOpen backend
+* Windows 7 uses the MIOpen backend
 * Ubuntu 18.04
 * CentOS/RHEL 7.6, 7.7
 * OSX Mojave and Catalina
