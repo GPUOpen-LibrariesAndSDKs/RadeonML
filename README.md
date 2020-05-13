@@ -16,8 +16,7 @@
 * [RadeonML_miopen.hpp](rml/include/rml/RadeonML_miopen.hpp) - MIOpen interoperation C++ API
 * [RadeonML_mtl.h](rml/include/rml/RadeonML_mtl.h) - Metal interoperation C API
 * [RadeonML_mtl.hpp](rml/include/rml_internal/RadeonML_mtl.hpp) - Metal interoperation C++ API
-* [RadeonML_internals.h](rml/include/rml_internal/RadeonML_internals.h) - API for internal usage and experiments
-* [RadeonML_internals.hpp](rml/include/rml_internal/RadeonML_internals.hpp) - API for internal usage and experiments
+
 
 
 ### Code examples
