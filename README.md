@@ -3,19 +3,19 @@
 ## 1. C/C++ API
 
 
-* [RadeonML.h](rml/include/rml/RadeonML.h) - main C API
-* [RadeonML.hpp](rml/include/rml/RadeonML.hpp) - main and graph manipulation C++ API
-* [RadeonML_cl.h](rml/include/rml/RadeonML_cl.h) - OpenCL interoperation C API
-* [RadeonML_cl.hpp](rml/include/rml/RadeonML_cl.hpp) - OpenCL interoperation C++ API
-* [RadeonML_d3d12.h](rml/include/rml/RadeonML_d3d12.h) - Direct3D 12 interoperation C API
-* [RadeonML_d3d12.hpp](rml/include/rml/RadeonML_d3d12.hpp) - Direct3D 12 interoperation C++ API
-* [RadeonML_dml.h](rml/include/rml/RadeonML_dml.h) - DirectML interoperation C API
-* [RadeonML_dml.hpp](rml/include/rml/RadeonML_dml.hpp) - DirectML interoperation C++ API
-* [RadeonML_graph.h](rml/include/rml/RadeonML.h) - graph manipulation C API
-* [RadeonML_miopen.h](rml/include/rml/RadeonML_miopen.h) - MIOpen interoperation C API
-* [RadeonML_miopen.hpp](rml/include/rml/RadeonML_miopen.hpp) - MIOpen interoperation C++ API
-* [RadeonML_mtl.h](rml/include/rml/RadeonML_mtl.h) - Metal interoperation C API
-* [RadeonML_mtl.hpp](rml/include/rml_internal/RadeonML_mtl.hpp) - Metal interoperation C++ API
+* [RadeonML.h](include/rml/RadeonML.h) - main C API
+* [RadeonML.hpp](include/rml/RadeonML.hpp) - main and graph manipulation C++ API
+* [RadeonML_cl.h](include/rml/RadeonML_cl.h) - OpenCL interoperation C API
+* [RadeonML_cl.hpp](include/rml/RadeonML_cl.hpp) - OpenCL interoperation C++ API
+* [RadeonML_d3d12.h](include/rml/RadeonML_d3d12.h) - Direct3D 12 interoperation C API
+* [RadeonML_d3d12.hpp](include/rml/RadeonML_d3d12.hpp) - Direct3D 12 interoperation C++ API
+* [RadeonML_dml.h](include/rml/RadeonML_dml.h) - DirectML interoperation C API
+* [RadeonML_dml.hpp](include/rml/RadeonML_dml.hpp) - DirectML interoperation C++ API
+* [RadeonML_graph.h](include/rml/RadeonML.h) - graph manipulation C API
+* [RadeonML_miopen.h](include/rml/RadeonML_miopen.h) - MIOpen interoperation C API
+* [RadeonML_miopen.hpp](include/rml/RadeonML_miopen.hpp) - MIOpen interoperation C++ API
+* [RadeonML_mtl.h](include/rml/RadeonML_mtl.h) - Metal interoperation C API
+* [RadeonML_mtl.hpp](include/rml/RadeonML_mtl.hpp) - Metal interoperation C++ API
 
 
 
@@ -59,7 +59,7 @@ https://radeon-pro.github.io/RadeonProRenderDocs/rml/about.html
 | VGG 16 | Yes  | No  | No |
 | VGG 19 | Yes  | No  | No |
 | UNet(denoiser) | Yes  | Yes  | Yes |
-| ESRGAN | Yes  | Yes  | No |
+| ESRGAN | Yes  | Yes  | Yes|
 | RTUnet | Yes  | Yes  | No |
 
 Others models may work as they will have similar operators, but we haven't checked them
