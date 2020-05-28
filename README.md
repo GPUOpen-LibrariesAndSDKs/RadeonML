@@ -53,6 +53,8 @@ https://radeon-pro.github.io/RadeonProRenderDocs/rml/about.html
 | ------------- | ------------- |------------- |------------- |
 | Inception V1 | Yes  | No  | No |
 | Inception V2 | Yes  | No  | No |
+| Inception V3 | Yes  | No  | No |
+| Inception V4 | Yes  | No  | No |
 | MobileNet V1 | Yes  | No  | No |
 | MobileNet V2 | Yes  | No  | No |
 | ResNet V1 50 | Yes  | No  | No |
@@ -61,7 +63,7 @@ https://radeon-pro.github.io/RadeonProRenderDocs/rml/about.html
 | VGG 19 | Yes  | No  | No |
 | UNet(denoiser) | Yes  | Yes  | Yes |
 | ESRGAN | Yes  | Yes  | Yes|
-| RTUnet | Yes  | Yes  | No |
+| RTUnet | Yes  | Yes  | Yes |
 
 Others models may work as they will have similar operators, but we haven't checked them
 
