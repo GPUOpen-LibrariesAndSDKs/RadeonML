@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 {
     /* Create a context */
     rml_context context = NULL;
-    CHECK(rmlCreateDefaultContext(&context));
+    CHECK(rmlCreateDefaultContext(&context) == RML_OK);
 
     /* Set model parameters */
 #if defined(_WIN32)

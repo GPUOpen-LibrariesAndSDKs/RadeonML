@@ -86,9 +86,9 @@ public:
     }
 
     /**
-     * Releases the C object handle. The wrapper becomes not reponsible for its release anymore.
+     * Detaches the C object handle. The wrapper becomes not reponsible for its release anymore.
      */
-    HandleType Release()
+    HandleType Detach()
     {
         auto handle = m_handle;
         m_handle = nullptr;

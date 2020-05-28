@@ -31,21 +31,6 @@ THE SOFTWARE.
 #include <vector>
 
 /*
- * Get bytes representation of data
- *
- * @param data - int32 or float32 data
- * @return - bytes representation of data
- */
-template<typename T>
-std::vector<uint8_t> GetBytes(const std::vector<T>& data)
-{
-    std::vector<uint8_t> byte_vec;
-    byte_vec.assign(reinterpret_cast<const uint8_t*>(data.data()),
-                    reinterpret_cast<const uint8_t*>(data.data() + data.size()));
-    return byte_vec;
-}
-
-/*
  * Create operation that holds information aboud input data
  *
  * @param graph - graph where operation is created
@@ -76,10 +61,9 @@ rml_op CreatePlaceholderOp(rml::Graph& graph,
 template<typename T>
 rml_op CreateScalarOp(rml::Graph& graph, const std::string& name, rml_dtype dtype, T value)
 {
-    auto data = GetBytes<T>({value});
     // Create constant operation
     rml_op_desc op_desc = {RML_OP_CONST, name.c_str()};
-    op_desc.constant = {{dtype, RML_LAYOUT_SCALAR}, data.data()};
+    op_desc.constant = {{dtype, RML_LAYOUT_SCALAR}, &value};
     return graph.CreateOperation(op_desc);
 }
 
@@ -316,14 +300,16 @@ int main() try
     };
 
     // Create a context
+    // The handles are released automatically upon scope exit
     rml::Context context = rml::CreateDefaultContext();
 
     // Load model as a mutable graph
-    // model input - 9-channel 800x600 image (3-channel ldr-color,
+    // model input - 9-channel 800x600 image (3-channel hdr-color,
     //                                        3-channel albedo,
     //                                        1-channel depth,
     //                                        2-channel normal)
     // model output - 3-channel 800x600 ldr image
+    // The handles are released automatically upon scope exit
     rml::Graph graph =
         context.LoadGraph(std::basic_string<rml_char>(model_path.begin(), model_path.end()));
 
@@ -337,6 +323,7 @@ int main() try
     graph = ConnectPostprocessingGraph(graph, "input", input_shapes[0]);
 
     // Create immutable model from connected graphs
+    // The handles are released automatically upon scope exit
     rml::Model model = context.CreateModel(graph);
 
     // Set up input info
@@ -361,6 +348,7 @@ int main() try
 
     // Create and fill the input tensors
     std::vector<rml::Tensor> inputs;
+    // The handles are released automatically upon scope exit
     for (size_t i = 0; i < input_shapes.size(); i++)
     {
         rml::Tensor input;
@@ -380,6 +368,7 @@ int main() try
     std::cout << "Output: " << output_info << std::endl;
 
     // Create the output tensor
+    // The handles are released automatically upon scope exit
     auto output_tensor = context.CreateTensor(output_info, RML_ACCESS_MODE_READ_ONLY);
 
     // Set model output
