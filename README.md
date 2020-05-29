@@ -75,3 +75,6 @@ If no queue are passed, RML will create a compute queue
 ## 4. Future
 We aim at providing the same level of feature for every back end and will provide updates monthly for that
 
+## 5. Building the samples
+You will need CMake 3.10 at least to build the sample.
+
