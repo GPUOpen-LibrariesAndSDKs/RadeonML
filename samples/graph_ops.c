@@ -31,24 +31,25 @@ THE SOFTWARE.
 #define RML_CHECK(STATUS)                          \
     do                                             \
     {                                              \
-        if (!(STATUS))                             \
+        if (STATUS != RML_OK)                      \
         {                                          \
             printf("%s\n", rmlGetLastError(NULL)); \
             exit(EXIT_FAILURE);                    \
         }                                          \
     } while (0)
 
-#define CHECK(STATUS)                              \
-    do                                             \
-    {                                              \
-        if (!(STATUS))                             \
-        {                                          \
-            exit(EXIT_FAILURE);                    \
-        }                                          \
+#define CHECK(STATUS)           \
+    do                          \
+    {                           \
+        if (!(STATUS))          \
+        {                       \
+            exit(EXIT_FAILURE); \
+        }                       \
     } while (0)
 
 #define NUM_INPUTS 4
 #define NHWC_RANK 4
+
 /*
  * Create operation that holds information aboud input data
  *
@@ -65,7 +66,7 @@ rml_op CreatePlaceholderOp(rml_graph graph, const char* name, const uint32_t* sh
         RML_OP_PLACEHOLDER, name, .placeholder = {RML_DTYPE_FLOAT32, RML_LAYOUT_NHWC}};
     memcpy(input_desc.placeholder.tensor_info.shape, shape, NHWC_RANK * sizeof(int));
     rml_op op_placeholder = NULL;
-    RML_CHECK(rmlCreateOperation(graph, &input_desc, &op_placeholder) == RML_OK);
+    RML_CHECK(rmlCreateOperation(graph, &input_desc, &op_placeholder));
     return op_placeholder;
 }
 
@@ -83,7 +84,7 @@ rml_op CreateScalarOp(rml_graph graph, const char* name, rml_dtype dtype, const 
 {
     rml_op_desc op_desc = {RML_OP_CONST, name, .constant = {{dtype, RML_LAYOUT_SCALAR}, value}};
     rml_op op_const = NULL;
-    RML_CHECK(rmlCreateOperation(graph, &op_desc, &op_const) == RML_OK);
+    RML_CHECK(rmlCreateOperation(graph, &op_desc, &op_const));
     return op_const;
 }
 /*
@@ -100,7 +101,7 @@ rml_op CreateUnaryOp(rml_graph graph, const char* name, rml_op_type op_type, rml
     // Create unary operation
     rml_op_desc op_desc = {op_type, name, .unary = {input}};
     rml_op op_unary = NULL;
-    RML_CHECK(rmlCreateOperation(graph, &op_desc, &op_unary) == RML_OK);
+    RML_CHECK(rmlCreateOperation(graph, &op_desc, &op_unary));
     return op_unary;
 }
 
@@ -123,7 +124,7 @@ rml_op CreateBinaryOp(rml_graph graph,
     // Create binary operation
     rml_op_desc op_desc = {op_type, name, .binary = {input1, input2}};
     rml_op op_binary = NULL;
-    RML_CHECK(rmlCreateOperation(graph, &op_desc, &op_binary) == RML_OK);
+    RML_CHECK(rmlCreateOperation(graph, &op_desc, &op_binary));
     return op_binary;
 }
 
@@ -145,7 +146,7 @@ rml_graph ConnectPreprocessingGraph(const rml_graph graph,
     // beta = 1.0
     /* Create a context */
     rml_graph preprocess_graph = NULL;
-    RML_CHECK(rmlCreateGraph(&preprocess_graph) == RML_OK);
+    RML_CHECK(rmlCreateGraph(&preprocess_graph));
 
     // Create placeholder per input
     rml_op color_op = CreatePlaceholderOp(preprocess_graph, input_names[0], input_infos[0].shape);
@@ -176,14 +177,13 @@ rml_graph ConnectPreprocessingGraph(const rml_graph graph,
     rml_op_desc concat_desc = {RML_OP_CONCAT, "concat", .concat = {NUM_INPUTS, inputs, axis_op}};
 
     rml_op op_concat = NULL;
-    RML_CHECK(rmlCreateOperation(preprocess_graph, &concat_desc, &op_concat) == RML_OK);
+    RML_CHECK(rmlCreateOperation(preprocess_graph, &concat_desc, &op_concat));
 
     // Connect preprocessing graph with base graph
     const char* graph_inputs[1];
-    RML_CHECK(rmlGetGraphInputNames(graph, 1, graph_inputs) == RML_OK);
+    RML_CHECK(rmlGetGraphInputNames(graph, 1, graph_inputs));
     rml_graph connected_graph = NULL;
-    RML_CHECK(rmlConnectGraphs(preprocess_graph, graph, graph_inputs[0], &connected_graph) ==
-              RML_OK);
+    RML_CHECK(rmlConnectGraphs(preprocess_graph, graph, graph_inputs[0], &connected_graph));
 
     return connected_graph;
 }
@@ -204,7 +204,7 @@ rml_graph ConnectPostprocessingGraph(rml_graph graph,
     // ldr_color = (clip(ldr_color, 0, 1)) ^ (gamma)
     // gamma = 0.4
     rml_graph postprocess_graph = NULL;
-    RML_CHECK(rmlCreateGraph(&postprocess_graph) == RML_OK);
+    RML_CHECK(rmlCreateGraph(&postprocess_graph));
 
     // Create placeholder for color
     rml_op input_op = CreatePlaceholderOp(postprocess_graph, input_name, input_shape);
@@ -213,7 +213,7 @@ rml_graph ConnectPostprocessingGraph(rml_graph graph,
     rml_op_desc clip_desc = {RML_OP_CLIP, "clip", .clip = {input_op, 0.f, 1.f}};
 
     rml_op clip_op = NULL;
-    RML_CHECK(rmlCreateOperation(postprocess_graph, &clip_desc, &clip_op) == RML_OK);
+    RML_CHECK(rmlCreateOperation(postprocess_graph, &clip_desc, &clip_op));
 
     // Create gamma
     float gamma_const = 0.4f;
@@ -224,10 +224,9 @@ rml_graph ConnectPostprocessingGraph(rml_graph graph,
 
     // Connect base graph with postprocessing graph
     const char* graph_inputs[1];
-    RML_CHECK(rmlGetGraphInputNames(postprocess_graph, 1, &graph_inputs) == RML_OK);
+    RML_CHECK(rmlGetGraphInputNames(postprocess_graph, 1, graph_inputs) == RML_OK);
     rml_graph connected_graph = NULL;
-    RML_CHECK(rmlConnectGraphs(graph, postprocess_graph, graph_inputs[0], &connected_graph) ==
-              RML_OK);
+    RML_CHECK(rmlConnectGraphs(graph, postprocess_graph, graph_inputs[0], &connected_graph));
     return connected_graph;
 }
 
@@ -243,6 +242,7 @@ void* ReadInput(const char* input_file)
     void* buffer;
     FILE* file = fopen(input_file, "rb");
     CHECK(file != NULL);
+    printf("Reading data from file: %s\n", input_file);
 
     fseek(file, 0, SEEK_END);
     long length = ftell(file);
@@ -251,6 +251,8 @@ void* ReadInput(const char* input_file)
     CHECK(buffer != NULL);
     size_t num_read = fread(buffer, sizeof(char), length, file);
     CHECK(num_read == length);
+    printf("Input data size: %d\n", num_read);
+
     fclose(file);
     return buffer;
 }
@@ -266,9 +268,11 @@ void WriteOutput(const char* output_file, const void* output, const size_t count
 {
     FILE* file = fopen(output_file, "wb");
     CHECK(file != NULL);
+    printf("Writing result to file: %s\n", output_file);
 
     size_t count_written = fwrite(output, sizeof(char), count, file);
     CHECK(count_written == count);
+    printf("Output data size: %d\n", count_written);
 
     fclose(file);
 }
@@ -281,21 +285,21 @@ int main()
 {
     /* Set model parameters */
 #if defined(_WIN32)
-    const rml_char* model_path = L"path/model.pb";
+    const rml_char* model_path = L"path/model";
 #else
-    const rml_char* model_path = "path/model.pb";
+    const rml_char* model_path = "path/model";
 #endif
 
     // Set input files
     const char* input_files[] = {
-        "path/color.bin",
-        "path/albedo.bin",
-        "path/depth.bin",
-        "path/normal.bin",
+        "path/color",
+        "path/albedo",
+        "path/depth",
+        "path/normal",
     };
 
     // Set output file
-    const char* output_file = "path/out.bin";
+    const char* output_file = "path/output";
 
     // Set input names
     const char* input_names[] = {"hdr-color", "albedo", "depth", "normal"};
@@ -309,7 +313,7 @@ int main()
 
     // Create a context
     rml_context context = NULL;
-    RML_CHECK(rmlCreateDefaultContext(&context) == RML_OK);
+    RML_CHECK(rmlCreateDefaultContext(&context));
 
     // Load model as a mutable graph
     // model input - 9-channel 800x600 image (3-channel ldr-color,
@@ -318,7 +322,7 @@ int main()
     //                                        2-channel normal)
     // model output - 3-channel 800x600 ldr image
     rml_graph graph = NULL;
-    RML_CHECK(rmlLoadGraph(model_path, &graph) == RML_OK);
+    RML_CHECK(rmlLoadGraph(model_path, &graph));
 
     // Add preprocessing of base model inputs
     // Before we can use ldr-denoiser for hdr-data, we should adjust hdr-color
@@ -334,67 +338,68 @@ int main()
 
     // Create immutable model from connected graphs
     rml_model model = NULL;
-    RML_CHECK(rmlCreateModelFromGraph(context, full_graph, &model) == RML_OK);
+    RML_CHECK(rmlCreateModelFromGraph(context, full_graph, &model));
+
+    /* Release the graph */
+    rmlReleaseGraph(full_graph);
 
     // Set up input info
     size_t i;
     for (i = 0; i < NUM_INPUTS; i++)
     {
-        RML_CHECK(rmlSetModelInputInfo(model, input_names[i], &input_infos[i]) == RML_OK);
+        RML_CHECK(rmlSetModelInputInfo(model, input_names[i], &input_infos[i]));
     }
 
     // Allocate all required memory and prepare model for inference
-    RML_CHECK(rmlPrepareModel(model) == RML_OK);
+    RML_CHECK(rmlPrepareModel(model));
 
     // Check memory info
     rml_memory_info memory_info;
-    RML_CHECK(rmlGetModelMemoryInfo(model, &memory_info) == RML_OK);
+    RML_CHECK(rmlGetModelMemoryInfo(model, &memory_info));
 
     // Create and fill the input tensors
     rml_tensor inputs[NUM_INPUTS];
     for (i = 0; i < NUM_INPUTS; i++)
     {
         rml_tensor input;
-        RML_CHECK(rmlCreateTensor(context, &input_infos[i], RML_ACCESS_MODE_WRITE_ONLY, &input) ==
-              RML_OK);
+        RML_CHECK(rmlCreateTensor(context, &input_infos[i], RML_ACCESS_MODE_WRITE_ONLY, &input));
         size_t data_size = 0;
         void* data = NULL;
-        RML_CHECK(rmlMapTensor(input, &data, &data_size) == RML_OK);
+        RML_CHECK(rmlMapTensor(input, &data, &data_size));
         void* file_data = ReadInput(input_files[i]);
         memcpy(data, file_data, data_size);
         free(file_data);
-        RML_CHECK(rmlUnmapTensor(input, data) == RML_OK);
+        RML_CHECK(rmlUnmapTensor(input, data));
         inputs[i] = input;
     }
 
     // Set model inputs
     for (i = 0; i < NUM_INPUTS; i++)
     {
-        RML_CHECK(rmlSetModelInput(model, input_names[i], inputs[i]) == RML_OK);
+        RML_CHECK(rmlSetModelInput(model, input_names[i], inputs[i]));
     }
 
     // Get output tensor information
     rml_tensor_info output_info;
-    RML_CHECK(rmlGetModelOutputInfo(model, NULL, &output_info) == RML_OK);
+    RML_CHECK(rmlGetModelOutputInfo(model, NULL, &output_info));
 
     // Create the output tensor
     rml_tensor output_tensor = NULL;
-    RML_CHECK(rmlCreateTensor(context, &output_info, RML_ACCESS_MODE_READ_ONLY, &output_tensor) ==
-          RML_OK);
+    RML_CHECK(rmlCreateTensor(context, &output_info, RML_ACCESS_MODE_READ_ONLY, &output_tensor));
 
     // Set model output
-    RML_CHECK(rmlSetModelOutput(model, NULL, output_tensor) == RML_OK);
+    RML_CHECK(rmlSetModelOutput(model, NULL, output_tensor));
 
     // Run the inference
-    RML_CHECK(rmlInfer(model) == RML_OK);
+    RML_CHECK(rmlInfer(model));
 
     // Get data from output tensor
     size_t output_size;
     void* output_data = NULL;
-    RML_CHECK(rmlMapTensor(output_tensor, &output_data, &output_size) == RML_OK);
+    RML_CHECK(rmlMapTensor(output_tensor, &output_data, &output_size));
 
     // Unmap output data
-    RML_CHECK(rmlUnmapTensor(output_tensor, &output_data) == RML_OK);
+    RML_CHECK(rmlUnmapTensor(output_tensor, &output_data));
 
     // Write the output
     WriteOutput(output_file, output_data, output_size);
@@ -408,9 +413,6 @@ int main()
 
     /* Release the model */
     rmlReleaseModel(model);
-
-    /* Release the graph */
-    rmlReleaseGraph(full_graph);
 
     /* Release the context */
     rmlReleaseContext(context);

@@ -496,12 +496,30 @@ RML_API_ENTRY rml_status rmlSetModelOutput(rml_model model, const char* name, rm
  * @return Status:
  * - #RML_OK if the operation is successful,
  * - #RML_ERROR_BAD_PARAMETER if @p model is invalid,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model,
+ * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() or required rmlSetModelInput()
+ *                              and/or rmlSetModelOutput() was not called on the model,
  * - #RML_ERROR_INTERNAL in case of an internal error.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
 RML_API_ENTRY rml_status rmlInfer(rml_model model);
+
+/**
+ * Resets internal model states to their initial values.
+ *
+ * All model must be prepared with rmlPrepare() before this function is called.
+ *
+ * @param[in] model A valid model handle.
+ *
+ * @return Status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p model is invalid,
+ * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model,
+ * - #RML_ERROR_INTERNAL in case of an internal error.
+ *
+ * To get more details in case of failure, call rmlGetLastError().
+ */
+RML_API_ENTRY rml_status rmlResetModelStates(rml_model model);
 
 /**
  * Releases a model loaded with rmlLoadModel() or created with rmlCreateModelFromGraph(), 

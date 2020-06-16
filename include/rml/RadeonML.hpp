@@ -290,6 +290,11 @@ public:
         RML_CHECK_STATUS(rmlInfer(m_handle));
     }
 
+    void ResetStates() const
+    {
+        RML_CHECK_STATUS(rmlResetModelStates(m_handle));
+    }
+
     static void ReleaseHandle(rml_model model)
     {
         rmlReleaseModel(model);
@@ -371,13 +376,6 @@ public:
         return Tensor(tensor);
     }
 
-    Graph LoadGraph(const std::basic_string<rml_char>& path) const
-    {
-        rml_graph graph = nullptr;
-        RML_CHECK_STATUS(rmlLoadGraph(path.c_str(), &graph));
-        return Graph(graph);
-    }
-
     Model CreateModel(const Graph& graph) const
     {
         rml_model model = NULL;
@@ -396,6 +394,13 @@ inline Context CreateDefaultContext()
     rml_context context = nullptr;
     RML_CHECK_STATUS(rmlCreateDefaultContext(&context));
     return Context(context);
+}
+
+inline Graph LoadGraph(const std::basic_string<rml_char>& path)
+{
+    rml_graph graph = nullptr;
+    RML_CHECK_STATUS(rmlLoadGraph(path.c_str(), &graph));
+    return Graph(graph);
 }
 
 } // namespace rml

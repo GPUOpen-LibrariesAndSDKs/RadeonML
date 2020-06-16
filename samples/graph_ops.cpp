@@ -272,21 +272,21 @@ int main() try
 {
     // Set model path
 #if defined(_WIN32)
-    std::wstring model_path(L"path/model.pb");
+    std::wstring model_path(L"path/model");
 #else
-    std::string model_path("path/model.pb");
+    std::string model_path("path/model");
 #endif
 
     // Set input files
     const std::vector<std::string> input_files = {
-        "path/color.bin",
-        "path/albedo.bin",
-        "path/depth.bin",
-        "path/normal.bin",
+        "path/color",
+        "path/albedo",
+        "path/depth",
+        "path/normal",
     };
 
     // Set output file
-    const std::string output_file = "path/out.bin";
+    const std::string output_file = "path/output";
 
     // Set input names
     const std::vector<std::string> input_names = {"hdr-color", "albedo", "depth", "normal"};
@@ -311,7 +311,7 @@ int main() try
     // model output - 3-channel 800x600 ldr image
     // The handles are released automatically upon scope exit
     rml::Graph graph =
-        context.LoadGraph(std::basic_string<rml_char>(model_path.begin(), model_path.end()));
+        rml::LoadGraph(std::basic_string<rml_char>(model_path.begin(), model_path.end()));
 
     // Add preprocessing of base model inputs
     // Before we can use ldr-denoiser for hdr-data, we should adjust hdr-color
