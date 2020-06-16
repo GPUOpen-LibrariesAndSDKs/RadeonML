@@ -116,27 +116,6 @@ If no queue are passed, RML will create a compute queue
 ## 4. Building and running the samples
 You will need CMake 3.10 at least to build the sample.
 
-```bash
-./test_app -m color_albedo_depth_normal_9_v3.pb \
-    -t float32 -l NHWC -s 1 600 800 9 \
-    -i input.bin -o output.bin
-```
-
-Run the application with a `-help` argument to get the list of available options:
-```
-     -m: Path to TensorFlow/ONNX model file (.pb, .pbtxt or .onnx)
-     -in: Input node name, autodetect if omitted
-     -on: Output node name, autodetect if omitted
-     -i: File with input data, read data from stdin if omitted
-     -o: File for output data, write to stdout if omitted
-     -t: Input data type, float32/float16, float32 by default
-     -l: Input tensor layout, NHWC/HCHW, NHWC by default
-     -s: Input tensor shape
-     -r: Number of times to repeat inference
-     -gmf: Amount of GPU memory to use (0, 1], unset by default
-     -vdl: Comma-separated list of device indices to use, use all devices if omitted
-```
-
 The input must contain contiguous data of a tensor with specified dimensions.
 The input (.bin files) in the repo don't necessarily represent real data at the moment, but just show to format the data
 
