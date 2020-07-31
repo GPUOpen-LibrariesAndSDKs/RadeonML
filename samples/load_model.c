@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 {
     // Create a context
     rml_context context = NULL;
-    RML_CHECK(rmlCreateDefaultContext(&context) == RML_OK);
+    RML_CHECK(rmlCreateDefaultContext(&context));
 
     // Set model parameters
 #if defined(_WIN32)
@@ -115,18 +115,18 @@ int main(int argc, char* argv[])
 
     // Load model
     rml_model model = NULL;
-    RML_CHECK(rmlLoadModel(context, model_path, &model) == RML_OK);
+    RML_CHECK(rmlLoadModel(context, model_path, &model));
 
     // Get initial input tensor information
     size_t num_inputs = 0;
-    RML_CHECK(rmlGetModelNumInputs(model, &num_inputs) == RML_OK);
+    RML_CHECK(rmlGetModelNumInputs(model, &num_inputs));
     CHECK(num_inputs == MAX_INPUTS);
 
     const char* input_names[MAX_INPUTS];
-    RML_CHECK(rmlGetModelInputNames(model, num_inputs, input_names) == RML_OK);
+    RML_CHECK(rmlGetModelInputNames(model, num_inputs, input_names));
 
     rml_tensor_info input_info;
-    RML_CHECK(rmlGetModelInputInfo(model, input_names[0], &input_info) == RML_OK);
+    RML_CHECK(rmlGetModelInputInfo(model, input_names[0], &input_info));
     CHECK(input_info.layout == RML_LAYOUT_NHWC || input_info.layout == RML_LAYOUT_NCHW);
 
     // Set unspecified input tensor dimensions if required
@@ -142,20 +142,19 @@ int main(int argc, char* argv[])
         input_info.shape[2] = 600;
         input_info.shape[3] = 800;
     }
-    RML_CHECK(rmlSetModelInputInfo(model, input_names[0], &input_info) == RML_OK);
+    RML_CHECK(rmlSetModelInputInfo(model, input_names[0], &input_info));
 
     // Prepare model for inference
-    RML_CHECK(rmlPrepareModel(model) == RML_OK);
+    RML_CHECK(rmlPrepareModel(model));
 
     // Create input tensor
     rml_tensor input_tensor = NULL;
-    RML_CHECK(rmlCreateTensor(context, &input_info, RML_ACCESS_MODE_WRITE_ONLY, &input_tensor) ==
-              RML_OK);
+    RML_CHECK(rmlCreateTensor(context, &input_info, RML_ACCESS_MODE_WRITE_ONLY, &input_tensor));
 
     // Map tensor data
     size_t data_size = 0;
     void* data = NULL;
-    RML_CHECK(rmlMapTensor(input_tensor, &data, &data_size) == RML_OK);
+    RML_CHECK(rmlMapTensor(input_tensor, &data, &data_size));
 
     // Copy data
     void* file_data = ReadInput(input_file);
@@ -163,33 +162,32 @@ int main(int argc, char* argv[])
 
     // Unmap tensor data
     free(file_data);
-    RML_CHECK(rmlUnmapTensor(input_tensor, data) == RML_OK);
+    RML_CHECK(rmlUnmapTensor(input_tensor, data));
 
     // Set model input
-    RML_CHECK(rmlSetModelInput(model, input_names[0], input_tensor) == RML_OK);
+    RML_CHECK(rmlSetModelInput(model, input_names[0], input_tensor));
 
     // Get output tensor information
     rml_tensor_info output_info;
-    RML_CHECK(rmlGetModelOutputInfo(model, NULL, &output_info) == RML_OK);
+    RML_CHECK(rmlGetModelOutputInfo(model, NULL, &output_info));
 
     // Create output tensor
     rml_tensor output_tensor = NULL;
-    RML_CHECK(rmlCreateTensor(context, &output_info, RML_ACCESS_MODE_READ_ONLY, &output_tensor) ==
-              RML_OK);
+    RML_CHECK(rmlCreateTensor(context, &output_info, RML_ACCESS_MODE_READ_ONLY, &output_tensor));
 
     // Set model output
-    RML_CHECK(rmlSetModelOutput(model, NULL, output_tensor) == RML_OK);
+    RML_CHECK(rmlSetModelOutput(model, NULL, output_tensor));
 
     // Run inference
-    RML_CHECK(rmlInfer(model) == RML_OK);
+    RML_CHECK(rmlInfer(model));
 
     // Get data from output tensor
     size_t output_size;
     void* output_data = NULL;
-    RML_CHECK(rmlMapTensor(output_tensor, &output_data, &output_size) == RML_OK);
+    RML_CHECK(rmlMapTensor(output_tensor, &output_data, &output_size));
 
     // Unmap output data
-    RML_CHECK(rmlUnmapTensor(output_tensor, &output_data) == RML_OK);
+    RML_CHECK(rmlUnmapTensor(output_tensor, &output_data));
 
     // Write the output
     WriteOutput(output_file, output_data, output_size);

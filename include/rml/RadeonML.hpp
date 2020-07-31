@@ -403,6 +403,11 @@ inline Graph LoadGraph(const std::basic_string<rml_char>& path)
     return Graph(graph);
 }
 
+inline std::string GetLastError()
+{
+    return rmlGetLastError(nullptr);
+}
+
 } // namespace rml
 
 #undef RML_CHECK_STATUS

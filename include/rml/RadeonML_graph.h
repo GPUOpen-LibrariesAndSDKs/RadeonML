@@ -114,7 +114,7 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
+     * - MIOpen: Yes.
      * - Apple MPS: No.
      *
      * @see rml_op_desc#avg, #rml_op_binary_params
@@ -270,7 +270,7 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: Partial. Scalar by tensor division is unsupported.
+     * - MIOpen: Yes.
      * - Apple MPS: Partial. Tensor broadcasting is unsupported.
      *
      * @see rml_op_desc#div, #rml_op_binary_params
@@ -446,8 +446,8 @@ typedef enum _rml_op_type
     RML_OP_NEG = 1470,
 
     /**
-     * @brief Describes data reorganization operator that inflates the input tensor with zeroes
-     * (or some other value) on the edges.
+     * @brief Describes a data reorganization operator that inflates the input tensor with zeroes
+     * (or some other value) on the edges
      *
      * Backend support:
      * - DirectML: Yes.
@@ -517,18 +517,6 @@ typedef enum _rml_op_type
      * @see rml_op_desc#pool_2d_max, #rml_op_pool_2d_params
      */
     RML_OP_POOL_2D_MAX = 1580,
-
-    /**
-     * @brief
-     *
-     * Backend support:
-     * - DirectML: No.
-     * - MIOpen: No.
-     * - Apple MPS: No.
-     *
-     * @see rml_op_desc#pool_2d_min, #rml_op_pool_2d_params
-     */
-    RML_OP_POOL_2D_MIN = 1590,
 
     /**
      * @brief Calculates power of an input tensor, element-wise.
@@ -738,9 +726,9 @@ typedef enum _rml_op_type
      * @brief Resizes an input tensor along spatial dims using the nearest neighbor algorithm.
      *
      * Backend support:
-     * - DirectML: Yes. No backend support. Custom shader.
-     * - MIOpen: Yes. No backend support. Custom shader.
-     * - Apple MPS: Yes. No backend support. Custom shader.
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#resize_2d_nearest, #rml_op_resize_2d_nearest_params
      */
@@ -980,9 +968,9 @@ typedef enum _rml_op_type
  * @brief The padding calculation algorithm.
  *
  * If padding type is one of {RML_PADDING_SAME_LOWER, RML_PADDING_SAME_UPPER, RML_PADDING_SAME},
- * then paddings will be added to output_spatial_size[i] = ceil(input_spatial_size[i] / strides[i]).
- * In case of odd number add the extra padding at the end for RML_PADDING_SAME_UPPER
- * and at the beginning for RML_PADDING_SAME_LOWER.
+ * then paddings will be added to output_spatial_size[i] = ceil(input_spatial_size[i] /
+ * strides[i]). In case of odd number add the extra padding at the end for
+ * RML_PADDING_SAME_UPPER and at the beginning for RML_PADDING_SAME_LOWER.
  *
  * Padding type RML_PADDING_VALID actually means no padding and in this case
  * output_spatial_size[i] = ceil((input_spatial_size[i] - (kernel_size[i]-1) * dilations[i]) /
@@ -1658,7 +1646,7 @@ typedef struct _rml_op_squeeze_params
      * Negative value means counting dimensions from the back.
      * Accepted range is [-R, R-1] where R = rank(data).
      */
-    const int32_t* axes;
+    int32_t axes[RML_TENSOR_MAX_RANK];
 
 } rml_op_squeeze_params;
 
@@ -1717,6 +1705,11 @@ typedef struct _rml_op_reduce_params
     rml_op input;
 
     /**
+     * If keepdims is true, the reduced dimensions are retained with length 1.
+     */
+    rml_bool keep_dims;
+
+    /**
      * Number of axes to reduce.
      */
     size_t num_axes;
@@ -1726,12 +1719,7 @@ typedef struct _rml_op_reduce_params
      * Negative value means counting dimensions from the back.
      * Accepted range is [-R, R-1] where R = rank(data).
      */
-    const int32_t* axes;
-
-    /**
-     * If keepdims is true, the reduced dimensions are retained with length 1.
-     */
-    rml_bool keep_dims;
+    int32_t axes[RML_TENSOR_MAX_RANK];
 
 } rml_op_reduce_params;
 
@@ -1759,7 +1747,7 @@ typedef struct _rml_op_transpose_params
      * If null, reverse the dimensions,
      * otherwise permute the axes according to the values given.
      */
-    const int32_t* axes;
+    int32_t axes[RML_TENSOR_MAX_RANK];
 
 } rml_op_transpose_params;
 
@@ -1785,7 +1773,7 @@ typedef struct _rml_op_unsqueeze_params
      * Negative value means counting dimensions from the back.
      * Accepted range is [-R, R-1] where R = rank(data).
      */
-    const int32_t* axes;
+    int32_t axes[RML_TENSOR_MAX_RANK];
 
 } rml_op_unsqueeze_params;
 
@@ -1814,23 +1802,23 @@ typedef struct _rml_op_pad_params
 
     /**
      * The number of dimensions.
-     * Determines the size of the StartPadding and EndPadding arrays.
+     * Determines the size of the start_padding and end_padding arrays.
      */
-    int32_t num_dims;
+    size_t num_dims;
 
     /**
-     * A pointer to a constant array of UINT containing the padding (number of pixels added)
+     * An array of UINT containing the padding (number of pixels added)
      * to the start of the corresponding axis. Padding defaults to 0 along the start and end of each
      * axis
      */
-    uint32_t* start_padding;
+    uint32_t start_padding[RML_TENSOR_MAX_RANK];
 
     /**
-     * A pointer to a constant array containing the padding (number of pixels added)
+     * An array containing the padding (number of pixels added)
      * to the end of the corresponding axis. Padding defaults to 0 along the start and end of each
      * axis.
      */
-    uint32_t* end_padding;
+    uint32_t end_padding[RML_TENSOR_MAX_RANK];
 
 } rml_op_pad_params;
 
@@ -2047,9 +2035,6 @@ typedef struct _rml_op_desc
 
         /** @see #RML_OP_POOL_2D_MAX, #rml_op_pool_2d_params */
         rml_op_pool_2d_params pool_2d_max;
-
-        /** @see #RML_OP_POOL_2D_MIN, #rml_op_pool_2d_params */
-        rml_op_pool_2d_params pool_2d_min;
 
         /** @see #RML_OP_POW, #rml_op_pow_params */
         rml_op_pow_params pow;
