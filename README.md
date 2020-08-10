@@ -91,12 +91,12 @@ https://radeon-pro.github.io/RadeonProRenderDocs/rml/about.html
 
 |    | DIRECTML | MIOPEN | MPS |
 | ------------- | ------------- |------------- |------------- |
-| Inception V1 | Yes  | No  | No |
-| Inception V2 | Yes  | No  | No |
-| Inception V3 | Yes  | No  | No |
-| Inception V4 | Yes  | No  | No |
-| MobileNet V1 | Yes  | No  | No |
-| MobileNet V2 | Yes  | No  | No |
+| Inception V1 | Yes  | Yes  | No |
+| Inception V2 | Yes  | Yes  | No |
+| Inception V3 | Yes  | Yes  | No |
+| Inception V4 | Yes  | Yes  | No |
+| MobileNet V1 | Yes  | Yes  | No |
+| MobileNet V2 | Yes  | Yes  | No |
 | ResNet V1 50 | Yes  | No  | No |
 | ResNet V2 50 | Yes  | No  | No |
 | VGG 16 | Yes  | No  | No |
