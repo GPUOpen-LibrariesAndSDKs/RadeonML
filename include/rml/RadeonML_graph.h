@@ -33,11 +33,6 @@ extern "C" {
 #endif
 
 /**
- * @brief A mutable operation graph.
- */
-typedef struct _rml_graph* rml_graph;
-
-/**
  * @brief A graph operation.
  */
 typedef struct _rml_op* rml_op;
@@ -55,7 +50,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#abs, #rml_op_unary_params
      */
@@ -66,8 +61,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#acos, #rml_op_unary_params
      */
@@ -79,7 +74,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: Partial. Tensor broadcasting is unsupported.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#add, #rml_op_binary_params
      */
@@ -90,8 +85,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#asin, #rml_op_unary_params
      */
@@ -102,8 +97,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#atan, #rml_op_unary_params
      */
@@ -115,7 +110,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#avg, #rml_op_binary_params
      */
@@ -162,20 +157,32 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#ceil, #rml_op_unary_params
      */
     RML_OP_CEIL = 1120,
 
     /**
+     * @brief Applies CeLU activation to an input tensor, element-wise.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#celu, #rml_op_celu_params
+     */
+    RML_OP_CELU = 1130,
+
+    /**
      * @brief Limits input tensor values within a specified range.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#clip, #rml_op_clip_params
      */
@@ -199,7 +206,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#constant, #rml_op_const_params
      */
@@ -211,7 +218,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#conv_2d, #rml_op_conv_2d_params
      */
@@ -246,8 +253,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#cos, #rml_op_unary_params
      */
@@ -271,7 +278,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: Partial. Tensor broadcasting is unsupported.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#div, #rml_op_binary_params
      */
@@ -283,7 +290,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#elu, #rml_op_elu_params
      */
@@ -318,8 +325,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#floor, #rml_op_unary_params
      */
@@ -355,7 +362,7 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#leaky_relu, #rml_op_leaky_relu_params
      */
@@ -378,8 +385,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#log_softmax, #rml_op_unary_params
      */
@@ -463,8 +470,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#parametric_relu, #rml_op_binary_params
      */
@@ -519,6 +526,18 @@ typedef enum _rml_op_type
     RML_OP_POOL_2D_MAX = 1580,
 
     /**
+     * @brief Returns a specified output tensor of an input operation.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
+     *
+     * @see rml_op_desc#port, #rml_op_port_params
+     */
+    RML_OP_PORT = 1625,
+
+    /**
      * @brief Calculates power of an input tensor, element-wise.
      *
      * Backend support:
@@ -529,6 +548,17 @@ typedef enum _rml_op_type
      * @see rml_op_desc#pow, #rml_op_pow_params
      */
     RML_OP_POW = 1630,
+
+    /**
+     * @brief Transforms a hig-precision input tensor into a low-precision output tensor.
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc #quantize_linear, #rml_op_quantize_linear_params
+     */
+    RML_OP_QUANTIZE_LINEAR = 1640,
 
     /**
      * @brief Calculates reciprocal of an input tensor, element-wise.
@@ -703,8 +733,8 @@ typedef enum _rml_op_type
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#relu6, #rml_op_unary_params
      */
@@ -730,33 +760,45 @@ typedef enum _rml_op_type
      * - MIOpen: Yes.
      * - Apple MPS: Yes.
      *
-     * @see rml_op_desc#resize_2d_nearest, #rml_op_resize_2d_nearest_params
+     * @see rml_op_desc#resize_2d_nearest, #rml_op_resize_2d_params
      */
     RML_OP_RESIZE_2D_NEAREST = 1810,
+
+    /**
+     * @brief Resizes an input tensor along spatial dims using the bicubic algorithm.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: Yes.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#resize_2d_bicubic, #rml_op_resize_2d_params
+     */
+    RML_OP_RESIZE_2D_BICUBIC = 1820,
 
     /**
      * @brief Calculates reciprocal of square root of an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
+     * - MIOpen: Yes.
      * - Apple MPS: Yes.
      *
      * @see rml_op_desc#rsqrt, #rml_op_unary_params
      */
-    RML_OP_RSQRT = 1860,
+    RML_OP_RSQRT = 1870,
 
     /**
      * @brief Applies Scaled ELU activation to an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#selu, #rml_op_selu_params
      */
-    RML_OP_SELU = 1870,
+    RML_OP_SELU = 1880,
 
     /**
      * @brief Outputs the shape of an input tensor.
@@ -768,7 +810,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#shape, #rml_op_unary_params
      */
-    RML_OP_SHAPE = 1880,
+    RML_OP_SHAPE = 1890,
 
     /**
      * @brief Applies Sigmoid activation of the input tensor, element-wise.
@@ -776,23 +818,23 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Partial. Invalid result in case of fp16.
      *
      * @see rml_op_desc#sigmoid, #rml_op_unary_params
      */
-    RML_OP_SIGMOID = 1890,
+    RML_OP_SIGMOID = 1900,
 
     /**
      * @brief Calculates sine of an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#sin, #rml_op_unary_params
      */
-    RML_OP_SIN = 1900,
+    RML_OP_SIN = 1910,
 
     /**
      * @brief Produces a strided slice of an input tensor along multiple axes.
@@ -804,43 +846,43 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#slice, #rml_op_slice_params
      */
-    RML_OP_SLICE = 1910,
+    RML_OP_SLICE = 1920,
 
     /**
      * @brief Applies Softmax activation to an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#softmax, #rml_op_unary_params
      */
-    RML_OP_SOFTMAX = 1920,
+    RML_OP_SOFTMAX = 1930,
 
     /**
      * @brief Applies Softplus activation to an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#softplus, #rml_op_unary_params
      */
-    RML_OP_SOFTPLUS = 1940,
+    RML_OP_SOFTPLUS = 1950,
 
     /**
      * @brief Applies Softsign activation to an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#softsign, #rml_op_unary_params
      */
-    RML_OP_SOFTSIGN = 1950,
+    RML_OP_SOFTSIGN = 1960,
 
     /**
      * @brief Rearranges blocks of spatial tensor data into channels.
@@ -852,19 +894,19 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#space_to_depth, #rml_op_space_to_depth_params
      */
-    RML_OP_SPACE_TO_DEPTH = 1960,
+    RML_OP_SPACE_TO_DEPTH = 1970,
 
     /**
      * @brief Calculates square root of an input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
+     * - MIOpen: Yes.
      * - Apple MPS: Yes.
      *
      * @see rml_op_desc#sqrt, #rml_op_unary_params
      */
-    RML_OP_SQRT = 1980,
+    RML_OP_SQRT = 1990,
 
     /**
      * @brief Removes single-dimensional entries from the shape of a tensor.
@@ -876,7 +918,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#squeeze, #rml_op_squeeze_params
      */
-    RML_OP_SQUEEZE = 1990,
+    RML_OP_SQUEEZE = 2000,
 
     /**
      * @brief Stacks a list of tensors with rank R into single tensor with rank R+1.
@@ -888,7 +930,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#stack, #rml_op_stack_params
      */
-    RML_OP_STACK = 2000,
+    RML_OP_STACK = 2010,
 
     /**
      * @brief Subtracts input tensors, element-wise.
@@ -900,19 +942,19 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#sub, #rml_op_binary_params
      */
-    RML_OP_SUB = 2010,
+    RML_OP_SUB = 2020,
 
     /**
      * @brief Calculate tangent of the input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#tan, #rml_op_unary_params
      */
-    RML_OP_TAN = 2020,
+    RML_OP_TAN = 2030,
 
     /**
      * @brief Applies hyperbolic tangent activation to an input tensor, element-wise.
@@ -920,23 +962,35 @@ typedef enum _rml_op_type
      * Backend support:
      * - DirectML: Yes.
      * - MIOpen: Yes.
-     * - Apple MPS: No.
+     * - Apple MPS: Partial. Invalid result in case of fp16.
      *
      * @see rml_op_desc#tanh, #rml_op_unary_params
      */
-    RML_OP_TANH = 2030,
+    RML_OP_TANH = 2040,
 
     /**
      * @brief Applies Thresholded ReLU activation of the input tensor, element-wise.
      *
      * Backend support:
      * - DirectML: Yes.
-     * - MIOpen: No.
-     * - Apple MPS: No.
+     * - MIOpen: Yes.
+     * - Apple MPS: Yes.
      *
      * @see rml_op_desc#thresholded_relu, #rml_op_thresholded_relu_params
      */
-    RML_OP_THRESHOLDED_RELU = 2040,
+    RML_OP_THRESHOLDED_RELU = 2050,
+
+     /**
+     * @brief Retrieve the top-K largest or smallest elements along a specified axis.
+     *
+     * Backend support:
+     * - DirectML: Yes.
+     * - MIOpen: No.
+     * - Apple MPS: No.
+     *
+     * @see rml_op_desc#top_k, #rml_op_top_k_params
+     */
+    RML_OP_TOP_K = 2060,
 
     /**
      * @brief Transposes an input tensor.
@@ -948,7 +1002,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#transpose, #rml_op_transpose_params
      */
-    RML_OP_TRANSPOSE = 2060,
+    RML_OP_TRANSPOSE = 2070,
 
     /**
      * @brief Inserts dimensions of size 1 at specified axis indices.
@@ -960,7 +1014,7 @@ typedef enum _rml_op_type
      *
      * @see rml_op_desc#unsqueeze, #rml_op_unsqueeze_params
      */
-    RML_OP_UNSQUEEZE = 2070,
+    RML_OP_UNSQUEEZE = 2080,
 
 } rml_op_type;
 
@@ -1434,6 +1488,26 @@ typedef struct _rml_op_pool_2d_global_params
 } rml_op_pool_2d_global_params;
 
 /**
+ * @brief The port operation parameters.
+ *
+ * By default every operation uses the first (0) port of its inputs.
+ * The #RML_OP_PORT allows to access also other ports.
+ */
+typedef struct _rml_op_port_params
+{
+    /**
+     * Operation that outputs one or more tensors.
+     */
+    rml_op input;
+
+    /**
+     * Index of an output (port) of the input operation.
+     */
+    uint32_t index;
+
+} rml_op_port_params;
+
+/**
  * @brief The pow operation parameters
  */
 typedef struct _rml_op_pow_params
@@ -1449,6 +1523,28 @@ typedef struct _rml_op_pow_params
     rml_op pow;
 
 } rml_op_pow_params;
+
+/**
+ * @brief The linear quantization parameters
+ */
+typedef struct _rml_op_quantize_linear_params
+{
+    /**
+     * Operation that outputs tensor containing hight-precision input data
+     */
+    rml_op input;
+
+    /**
+     * Operation that outputs tensor containing scale data
+     */
+    rml_op scale;
+
+    /**
+     * Operation that outputs tensor containing zero point data
+     */
+    rml_op zero_point;
+
+} rml_op_quantize_linear_params;
 
 /**
  * @brief Parameters for the #RML_OP_SPACE_TO_DEPTH operation.
@@ -1479,7 +1575,7 @@ typedef struct _rml_op_space_to_depth_params
  * RML_OP_RESIZE_2D_NEAREST operation resize input tensor to output spatial shape specified
  * by @p size using nearest neighbour algorithm.
  */
-typedef struct _rml_op_resize_2d_nearest_params
+typedef struct _rml_op_resize_2d_params
 {
     /**
      * Operation that outputs tensor containing input data
@@ -1491,7 +1587,12 @@ typedef struct _rml_op_resize_2d_nearest_params
      */
     rml_op size;
 
-} rml_op_resize_2d_nearest_params;
+    /**
+     * Output spatial scales
+     */
+    rml_op scales;
+
+} rml_op_resize_2d_params;
 
 /**
  * @brief Parameters for all the RML_OP_* operations
@@ -1908,9 +2009,47 @@ typedef struct _rml_op_local_response_norm_params
 
 } rml_op_local_response_norm_params;
 
+/**
+ * @brief Parameters for the #RML_OP_TOP_K operation
+ *
+ */
+typedef struct _rml_op_top_k_params
+{
+    /**
+     * Operation that outputs tensor containing input data
+     */
+    rml_op input;
+
+    /**
+     * Dimension on which to do the sort. Negative value means counting dimensions from the back. 
+     * Accepted range is [-r, r-1] where r = rank(input).
+     */
+    int32_t axis;
+
+     /**
+      * Number of returned elements.
+      */
+    uint32_t k;
+
+} rml_op_top_k_params;
+
 #define RML_OP_LRN_DEFAULT_ALPHA 0.0001f
 #define RML_OP_LRN_DEFAULT_BETA 0.75f
 #define RML_OP_LRN_DEFAULT_BIAS 1.0f
+
+typedef struct _rml_op_celu_params
+{
+    /**
+     * Operation that outputs tensor containing the input data
+     */
+    rml_op input;
+
+    /**
+     * Scaling and exponent parameter.
+     */
+    float alpha;
+
+} rml_op_celu_params;
 
 typedef struct _rml_op_desc
 {
@@ -1948,6 +2087,9 @@ typedef struct _rml_op_desc
 
         /** @see #RML_OP_CEIL, #rml_op_unary_params */
         rml_op_unary_params ceil;
+
+        /** @see #RML_OP_CELU, #rml_op_celu_params */
+        rml_op_celu_params celu;
 
         /** @see #RML_OP_CLIP, #rml_op_clip_params */
         rml_op_clip_params clip;
@@ -2036,8 +2178,14 @@ typedef struct _rml_op_desc
         /** @see #RML_OP_POOL_2D_MAX, #rml_op_pool_2d_params */
         rml_op_pool_2d_params pool_2d_max;
 
+        /** @see #RML_OP_PORT, #rml_op_port_params */
+        rml_op_port_params port;
+
         /** @see #RML_OP_POW, #rml_op_pow_params */
         rml_op_pow_params pow;
+
+        /** @see #RML_OP_QUANTIZE_LINEAR, #rml_op_quantize_linear_params */
+        rml_op_quantize_linear_params quantize_linear;
 
         /** @see #RML_OP_RECIP, #rml_op_unary_params */
         rml_op_unary_params recip;
@@ -2087,8 +2235,11 @@ typedef struct _rml_op_desc
         /** @see #RML_OP_RESHAPE, #rml_op_reshape_params */
         rml_op_reshape_params reshape;
 
-        /** @see #RML_OP_RESIZE_2D_NEAREST, #rml_op_resize_2d_nearest_params */
-        rml_op_resize_2d_nearest_params resize_2d_nearest;
+        /** @see #RML_OP_RESIZE_2D_NEAREST, #rml_op_resize_2d_params */
+        rml_op_resize_2d_params resize_2d_nearest;
+
+        /** @see #RML_OP_RESIZE_2D_BICUBIC, #rml_op_resize_2d_params */
+        rml_op_resize_2d_params resize_2d_bicubic;
 
         /** @see #RML_OP_RSQRT, #rml_op_unary_params */
         rml_op_unary_params rsqrt;
@@ -2141,6 +2292,9 @@ typedef struct _rml_op_desc
         /** @see #RML_OP_THRESHOLDED_RELU, #rml_op_thresholded_relu_params */
         rml_op_thresholded_relu_params thresholded_relu;
 
+        /** @see #RML_OP_TOP_K, #rml_op_top_k_params */
+        rml_op_top_k_params top_k;
+
         /** @see #RML_OP_TRANSPOSE, #rml_op_transpose_params */
         rml_op_transpose_params transpose;
 
@@ -2152,21 +2306,10 @@ typedef struct _rml_op_desc
         rml_op_pool_2d_global_params pool_2d_global;
         rml_op_unary_params unary;
         rml_op_reduce_params reduce;
+        rml_op_resize_2d_params resize_2d;
     };
 
 } rml_op_desc;
-
-/**
- * Load graph from file.
- *
- * @param[in]  path  Path to a graph in the TF or ONNX formats.
- * @param[out] graph The pointer to a resulting graph.
- *
- * @return A valid graph handle in case of success, NULL otherwise.
- *         To get more details in case of failure, call rmlGetLastError().
- *         The graph should be released with rmlReleaseGraph().
- */
-RML_API_ENTRY rml_status rmlLoadGraph(const rml_char* path, rml_graph* graph);
 
 /**
  * Creates empty graph.
@@ -2178,45 +2321,62 @@ RML_API_ENTRY rml_status rmlLoadGraph(const rml_char* path, rml_graph* graph);
 RML_API_ENTRY rml_status rmlCreateGraph(rml_graph* graph);
 
 /**
- * Returns the number of input nodes (placeholders) in a graph.
- *
- * @param[in]  graph  A valid graph handle.
- * @param[out] num_inputs A pointer to the number of input nodes value.
- *
- * @return RML_OK in case of success, RML_FAIL otherwise.
- *         To get more details in case of failure, call rmlGetLastError().
- */
-RML_API_ENTRY rml_status rmlGetGraphNumInputs(rml_graph graph, size_t* num_inputs);
-
-/**
  * Returns input nodes (placeholders) in the graph.
  *
  * @param[in]  graph  A valid graph handle.
- * @param[in]  num_inputs A Number of input nodes.
- * @param[out] inputs A pointer to an array of inputs.
+ * @param[out] names  A pointer to a structure with resulting input names.
  *
- * @return RML_OK in case of success, RML_FAIL otherwise.
- *         To get more details in case of failure, call rmlGetLastError().
+ * @return A model handle in case of success and status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p graph is invalid or @p names is NULL.
+ *
+ * The returned strings memory is owned by the graph and must not be freed.
+ * The memory may be invalidated an a next call involving the graph.
+ * To get more details in case of failure, call rmlGetLastError().
  */
-RML_API_ENTRY rml_status rmlGetGraphInputNames(rml_graph graph,
-                                               size_t num_inputs,
-                                               const char* names[]);
+RML_API_ENTRY rml_status rmlGetGraphInputNames(rml_graph graph, rml_strings* names);
 
 /**
- * Combines supplied graphs to a single graph connecting output and input of the neighbouring
+ * Returns output nodes in the graph.
+ *
+ * @param[in]  graph  A valid graph handle.
+ * @param[out] names  A pointer to a structure with resulting output names.
+ *
+ * @return A model handle in case of success and status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p graph is invalid or @p names is NULL.
+ *
+ * The returned strings memory is owned by the graph and must not be freed.
+ * The memory may be invalidated an a next call involving the graph.
+ * To get more details in case of failure, call rmlGetLastError().
+ */
+RML_API_ENTRY rml_status rmlGetGraphOutputNames(rml_graph graph, rml_strings* names);
+
+/**
+ * Combines supplied graphs to a single graph connecting outputs and inputs of the specified
  * graphs. So, graphs in different formats (i.e. TF and ONNX) can be combined into single graph.
  *
  * @param[in] head_graph        A graph to be inserted in tail_graph.
- * @param[in] tail_graph        A graph with a node to be replaced after connection.
- * @param[in] tail_input        A node in tail_graph where head graph will be inserted.
+ * @param[in] tail_graph        A graph with a nodes to be replaced after connection.
+ * @param[in] num_connections   A number of nodes in head/tail graph to be connected.
+ * @param[in] head_outputs      A list of nodes in head_graph to be connected.
+ * @param[in] tail_inputs       A list of nodes in tail_graph where head graph output nodes
+ *                              will be inserted.
  * @param[out] connected_graph  Result graph containing tail_graph and head_graph.
  *
- * @return RML_OK in case of success, RML_FAIL otherwise.
- *         To get more details in case of failure, call rmlGetLastError().
+ * @return A model handle in case of success and status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p head_graph, @p tail_graph is invalid,
+ *                            if @p num_connections is 0 or
+ *                            if @p head_outputs, @p tail_inputs or @p connected_graph is NULL.
+ *
+ * To get more details in case of failure, call rmlGetLastError().
  */
 RML_API_ENTRY rml_status rmlConnectGraphs(rml_graph head_graph,
                                           rml_graph tail_graph,
-                                          const char* tail_input,
+                                          size_t num_connections,
+                                          const char* const* head_outputs,
+                                          const char* const* tail_inputs,
                                           rml_graph* connected_graph);
 
 /**
@@ -2232,19 +2392,6 @@ RML_API_ENTRY rml_status rmlConnectGraphs(rml_graph head_graph,
 RML_API_ENTRY rml_status rmlCreateOperation(rml_graph graph,
                                             const rml_op_desc* op_desc,
                                             rml_op* op);
-
-/**
- * Creates immutable model from supplied graph.
- *
- * @param[in] context A valid context handle.
- * @param[in] graph A valid graph handle.
- *
- * @return A valid model handle in case of success, NULL otherwise.
- *         To get more details in case of failure, call rmlGetLastError().
- */
-RML_API_ENTRY rml_status rmlCreateModelFromGraph(rml_context context,
-                                                 rml_graph graph,
-                                                 rml_model* model);
 
 /**
  * Releases a graph created with rmlCreateGraph() or rmlLoadgraph(), invalidates the handle.

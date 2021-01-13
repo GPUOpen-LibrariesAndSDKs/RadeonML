@@ -45,14 +45,14 @@ inline Tensor CreateTensorFromD3DResource(const Context& context,
                                           const rml_tensor_info& info)
 {
     rml_tensor tensor = nullptr;
-    RML_CHECK_STATUS(rmlCreateTensorFromD3DResource(context, resource, &info, &tensor));
+    RML_CHECK_STATUS(rmlCreateTensorFromD3DResource(context(), resource, &info, &tensor));
     return Tensor(tensor);
 }
 
 inline void* GetD3DResourceFromTensor(const Tensor& tensor)
 {
     void* resource = nullptr;
-    RML_CHECK_STATUS(rmlGetD3DResourceFromTensor(tensor, &resource));
+    RML_CHECK_STATUS(rmlGetD3DResourceFromTensor(tensor(), &resource));
     return resource /* ID3D12Resource* */;
 }
 
@@ -60,17 +60,12 @@ inline void SetD3DCommandList(const Context& context,
                               void* command_list /* ID3D12GraphicsCommandList* */,
                               void* command_allocator /* ID3D12CommandAllocator* */)
 {
-    RML_CHECK_STATUS(rmlSetD3DCommandList(context, command_list, command_allocator));
+    RML_CHECK_STATUS(rmlSetD3DCommandList(context(), command_list, command_allocator));
 }
 
 inline void SetNumD3DCommandLists(const Context& context, unsigned int num_command_lists)
 {
-    RML_CHECK_STATUS(rmlSetNumD3DCommandLists(context, num_command_lists));
-}
-
-inline void CopyTensor(const Tensor& src, const Tensor& dst)
-{
-    RML_CHECK_STATUS(rmlCopyTensor(src, dst));
+    RML_CHECK_STATUS(rmlSetNumD3DCommandLists(context(), num_command_lists));
 }
 
 } // namespace rml

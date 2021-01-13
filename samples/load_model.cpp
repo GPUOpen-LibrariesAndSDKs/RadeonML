@@ -118,11 +118,11 @@ int main() try
     const std::string output_file = "path/output";
 
     // Load model
-    rml::Model model = context.LoadModel(model_path);
+    rml::Graph graph = rml::LoadGraphFromFile(model_path);
+    rml::Model model = context.CreateModel(graph);
 
     // Get initial input tensor information
-    std::vector<std::string> input_names;
-    model.GetInputNames(input_names);
+    std::vector<const char*> input_names = graph.GetInputNames();
     if (input_names.empty())
     {
         throw std::runtime_error("No model inputs were found");
@@ -147,9 +147,6 @@ int main() try
         throw std::runtime_error("Only NCHW or NHWC data layout is supported");
     }
     model.SetInputInfo(input_names[0], input_info);
-
-    // Prepare model for inference
-    model.Prepare();
 
     // Create the input tensor
     // The handle is released automatically upon scope exit

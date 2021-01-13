@@ -49,26 +49,21 @@ class Wrapper
 public:
     Wrapper() noexcept = default;
 
-    explicit Wrapper(HandleType handle) noexcept : m_handle(handle)
-    {
-    }
+    explicit Wrapper(HandleType handle) noexcept : m_handle(handle) {}
 
-    Wrapper(Wrapper&& other) noexcept : m_handle(other.m_handle)
-    {
-        other.m_handle = nullptr;
-    }
+    Wrapper(Wrapper&& other) noexcept : m_handle(other.m_handle) { other.m_handle = nullptr; }
 
     T& operator=(HandleType handle) noexcept
     {
-        T to_release(std::move(*this)); // 'this' is now empty
+        Wrapper to_release(std::move(*this)); // 'this' is now empty
         m_handle = handle;
         return static_cast<T&>(*this);
     }
 
     T& operator=(Wrapper&& rhs) noexcept
     {
-        T to_release(std::move(static_cast<T&>(*this))); // 'this' is now empty
-        std::swap(m_handle, rhs.m_handle);               // 'rhs' is now empty
+        Wrapper to_release(std::move(*this)); // 'this' is now empty
+        std::swap(m_handle, rhs.m_handle);    // 'rhs' is now empty
         return static_cast<T&>(*this);
     }
 
@@ -80,10 +75,15 @@ public:
         }
     }
 
-    operator HandleType() const
-    {
-        return m_handle;
-    }
+    /**
+     * Returns true if the object is initialized i.e. contains a C object handle.
+     */
+    explicit operator bool() const { return m_handle != nullptr; }
+
+    /**
+     * Returns the C object handle.
+     */
+    HandleType operator()() const { return m_handle; }
 
     /**
      * Detaches the C object handle. The wrapper becomes not reponsible for its release anymore.
@@ -107,7 +107,7 @@ inline void CheckStatus(bool status, const char* op_name)
         const auto end_pos = func_name.find('(');
         func_name.erase(end_pos != std::string::npos ? end_pos : func_name.size());
 
-        throw std::runtime_error(func_name + " failed: " + rmlGetLastError(nullptr));
+        throw std::runtime_error(func_name + " failed: " + rmlGetLastError());
     }
 }
 
@@ -133,10 +133,7 @@ public:
         return data;
     }
 
-    void Unmap(void* data) const
-    {
-        RML_CHECK_STATUS(rmlUnmapTensor(m_handle, data));
-    }
+    void Unmap(void* data) const { RML_CHECK_STATUS(rmlUnmapTensor(m_handle, data)); }
 
     template<class T>
     void Write(const T& src) const
@@ -165,10 +162,15 @@ public:
         Unmap(ptr);
     }
 
-    static void ReleaseHandle(rml_tensor tensor)
+    template<class T = uint8_t>
+    std::vector<T> Read() const
     {
-        rmlReleaseTensor(tensor);
+        std::vector<T> data;
+        Read(data);
+        return data;
     }
+
+    static void ReleaseHandle(rml_tensor tensor) { rmlReleaseTensor(tensor); }
 };
 
 class Model : public details::Wrapper<Model, rml_model>
@@ -184,22 +186,6 @@ public:
         return memory_info;
     }
 
-    size_t GetNumInputs() const
-    {
-        size_t num_inputs = 0;
-        RML_CHECK_STATUS(rmlGetModelNumInputs(m_handle, &num_inputs));
-        return num_inputs;
-    }
-
-    template<class T>
-    void GetInputNames(T& names) const
-    {
-        size_t num_inputs = GetNumInputs();
-        std::vector<const char*> c_names(num_inputs);
-        RML_CHECK_STATUS(rmlGetModelInputNames(m_handle, num_inputs, c_names.data()));
-        names = {c_names.begin(), c_names.end()};
-    }
-
     rml_tensor_info GetInputInfo(const char* name = nullptr) const
     {
         rml_tensor_info info;
@@ -209,7 +195,7 @@ public:
 
     rml_tensor_info GetInputInfo(const std::string& name) const
     {
-        return GetInputInfo(name.c_str());
+        return GetInputInfo(name.empty() ? nullptr : name.c_str());
     }
 
     void SetInputInfo(const char* name, const rml_tensor_info& info) const
@@ -219,18 +205,16 @@ public:
 
     void SetInputInfo(const std::string& name, const rml_tensor_info& info) const
     {
-        SetInputInfo(name.c_str(), info);
+        SetInputInfo(name.empty() ? nullptr : name.c_str(), info);
     }
 
-    void SetInputInfo(const rml_tensor_info& info) const
-    {
-        SetInputInfo(nullptr, info);
-    }
+    void SetInputInfo(const rml_tensor_info& info) const { SetInputInfo(nullptr, info); }
 
     void SetOutputNames(const std::initializer_list<const char*>& names) const
     {
         std::vector<const char*> c_strings(names.begin(), names.end());
-        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, c_strings.size(), c_strings.data()));
+        rml_strings output_names = {c_strings.size(), c_strings.data()};
+        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, &output_names));
     }
 
     void SetOutputNames(const std::vector<std::string>& names) const
@@ -240,7 +224,8 @@ public:
         std::transform(strings.begin(), strings.end(), c_strings.begin(), [](const std::string& s) {
             return s.c_str();
         });
-        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, c_strings.size(), c_strings.data()));
+        rml_strings output_names = {c_strings.size(), c_strings.data()};
+        RML_CHECK_STATUS(rmlSetModelOutputNames(m_handle, &output_names));
     }
 
     rml_tensor_info GetOutputInfo(const char* name = nullptr) const
@@ -250,55 +235,42 @@ public:
         return info;
     }
 
-    void SetInput(const char* name, const rml::Tensor& info) const
+    rml_tensor_info GetOutputInfo(const std::string& name) const
     {
-        RML_CHECK_STATUS(rmlSetModelInput(m_handle, name, info));
+        return GetOutputInfo(name.empty() ? nullptr : name.c_str());
     }
 
-    void SetInput(const std::string& name, const rml::Tensor& info) const
+    void SetInput(const char* name, const rml::Tensor& tensor) const
     {
-        SetInput(name.c_str(), info);
+        RML_CHECK_STATUS(rmlSetModelInput(m_handle, name, tensor()));
     }
 
-    void SetInput(const rml::Tensor& info) const
+    void SetInput(const std::string& name, const rml::Tensor& tensor) const
     {
-        SetInput(nullptr, info);
+        SetInput(name.empty() ? nullptr : name.c_str(), tensor);
     }
 
-    void SetOutput(const char* name, const rml::Tensor& info) const
+    void SetInput(const rml::Tensor& tensor) const { SetInput(nullptr, tensor); }
+
+    void SetOutput(const char* name, const rml::Tensor& tensor) const
     {
-        RML_CHECK_STATUS(rmlSetModelOutput(m_handle, name, info));
+        RML_CHECK_STATUS(rmlSetModelOutput(m_handle, name, tensor()));
     }
 
-    void SetOutput(const std::string& name, const rml::Tensor& info) const
+    void SetOutput(const std::string& name, const rml::Tensor& tensor) const
     {
-        SetOutput(name.c_str(), info);
+        SetOutput(name.empty() ? nullptr : name.c_str(), tensor);
     }
 
-    void SetOutput(const rml::Tensor& info) const
-    {
-        SetOutput(nullptr, info);
-    }
+    void SetOutput(const rml::Tensor& tensor) const { SetOutput(nullptr, tensor); }
 
-    void Prepare() const
-    {
-        RML_CHECK_STATUS(rmlPrepareModel(m_handle));
-    }
+    void Prepare() const { RML_CHECK_STATUS(rmlPrepareModel(m_handle)); }
 
-    void Infer() const
-    {
-        RML_CHECK_STATUS(rmlInfer(m_handle));
-    }
+    void Infer() const { RML_CHECK_STATUS(rmlInfer(m_handle)); }
 
-    void ResetStates() const
-    {
-        RML_CHECK_STATUS(rmlResetModelStates(m_handle));
-    }
+    void ResetStates() const { RML_CHECK_STATUS(rmlResetModelStates(m_handle)); }
 
-    static void ReleaseHandle(rml_model model)
-    {
-        rmlReleaseModel(model);
-    }
+    static void ReleaseHandle(rml_model model) { rmlReleaseModel(model); }
 
 private:
     mutable std::vector<rml_tensor> m_inputs;
@@ -317,28 +289,33 @@ public:
         return op;
     }
 
-    size_t GetNumInputs() const
+    std::vector<const char*> GetInputNames() const
     {
-        size_t num_inputs;
-        RML_CHECK_STATUS(rmlGetGraphNumInputs(m_handle, &num_inputs));
-        return num_inputs;
+        rml_strings input_data = GetInputNamesInternal();
+        return {input_data.items, input_data.items + input_data.num_items};
     }
 
-    void GetInputNames(std::vector<const char*>& names) const
+    std::vector<const char*> GetOutputNames() const
     {
-        size_t num_inputs = GetNumInputs(); 
-        names.resize(num_inputs);
-        GetInputNames(num_inputs, names.data());
+        rml_strings output_data = GetOutputNamesInternal();
+        return {output_data.items, output_data.items + output_data.num_items};
     }
 
-    void GetInputNames(size_t num_inputs, const char* names[]) const
+    static void ReleaseHandle(rml_graph graph) { rmlReleaseGraph(graph); }
+
+private:
+    rml_strings GetInputNamesInternal() const
     {
-        RML_CHECK_STATUS(rmlGetGraphInputNames(m_handle, num_inputs, names));
+        rml_strings input_data;
+        RML_CHECK_STATUS(rmlGetGraphInputNames(m_handle, &input_data));
+        return input_data;
     }
 
-    static void ReleaseHandle(rml_graph graph)
+    rml_strings GetOutputNamesInternal() const
     {
-        rmlReleaseGraph(graph);
+        rml_strings output_names;
+        RML_CHECK_STATUS(rmlGetGraphOutputNames(m_handle, &output_names));
+        return output_names;
     }
 };
 
@@ -349,10 +326,15 @@ inline Graph CreateGraph()
     return Graph(graph);
 }
 
-inline Graph ConnectGraphs(rml_graph head_graph, rml_graph tail_graph, const char* tail_node)
+inline Graph ConnectGraphs(const Graph& head_graph,
+                           const Graph& tail_graph,
+                           size_t num_connections,
+                           const char* const* head_outputs,
+                           const char* const* tail_inputs)
 {
     rml_graph graph = NULL;
-    RML_CHECK_STATUS(rmlConnectGraphs(head_graph, tail_graph, tail_node, &graph));
+    RML_CHECK_STATUS(rmlConnectGraphs(
+        head_graph(), tail_graph(), num_connections, head_outputs, tail_inputs, &graph));
     return Graph(graph);
 }
 
@@ -361,13 +343,6 @@ class Context : public details::Wrapper<Context, rml_context>
 public:
     using details::Wrapper<Context, rml_context>::Wrapper;
     using details::Wrapper<Context, rml_context>::operator=;
-
-    Model LoadModel(const std::basic_string<rml_char>& path) const
-    {
-        rml_model model = nullptr;
-        RML_CHECK_STATUS(rmlLoadModel(m_handle, path.c_str(), &model));
-        return Model(model);
-    }
 
     Tensor CreateTensor(const rml_tensor_info& info, rml_access_mode mode) const
     {
@@ -379,33 +354,44 @@ public:
     Model CreateModel(const Graph& graph) const
     {
         rml_model model = NULL;
-        RML_CHECK_STATUS(rmlCreateModelFromGraph(m_handle, graph, &model));
+        RML_CHECK_STATUS(rmlCreateModelFromGraph(m_handle, graph(), &model));
         return Model(model);
     }
 
-    static void ReleaseHandle(rml_context context)
-    {
-        rmlReleaseContext(context);
-    }
+    static void ReleaseHandle(rml_context context) { rmlReleaseContext(context); }
 };
 
 inline Context CreateDefaultContext()
 {
     rml_context context = nullptr;
-    RML_CHECK_STATUS(rmlCreateDefaultContext(&context));
+    RML_CHECK_STATUS(rmlCreateDefaultContext(nullptr, &context));
     return Context(context);
 }
 
-inline Graph LoadGraph(const std::basic_string<rml_char>& path)
+inline Context CreateDefaultContext(const rml_context_params& params)
+{
+    rml_context context = nullptr;
+    RML_CHECK_STATUS(rmlCreateDefaultContext(&params, &context));
+    return Context(context);
+}
+
+inline Graph LoadGraphFromFile(const std::basic_string<rml_char>& path)
 {
     rml_graph graph = nullptr;
-    RML_CHECK_STATUS(rmlLoadGraph(path.c_str(), &graph));
+    RML_CHECK_STATUS(rmlLoadGraphFromFile(path.c_str(), &graph));
+    return Graph(graph);
+}
+
+inline Graph LoadGraphFromBuffer(size_t size, const void* buffer, rml_graph_format format)
+{
+    rml_graph graph = nullptr;
+    RML_CHECK_STATUS(rmlLoadGraphFromBuffer(size, buffer, format, &graph));
     return Graph(graph);
 }
 
 inline std::string GetLastError()
 {
-    return rmlGetLastError(nullptr);
+    return rmlGetLastError();
 }
 
 } // namespace rml

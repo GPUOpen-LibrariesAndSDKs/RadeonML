@@ -37,7 +37,7 @@ namespace rml {
 
 inline void SetMIOpenAutoTuningOn(const Context& context, bool on)
 {
-    RML_CHECK_STATUS(rmlSetMIOpenAutoTuningOn(context, on ? RML_TRUE : RML_FALSE));
+    RML_CHECK_STATUS(rmlSetMIOpenAutoTuningOn(context(), on ? RML_TRUE : RML_FALSE));
 }
 
 } // namespace rml

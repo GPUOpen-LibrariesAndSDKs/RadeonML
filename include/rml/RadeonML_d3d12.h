@@ -127,20 +127,6 @@ RML_API_ENTRY rml_status rmlSetD3DCommandList(rml_context context,
 RML_API_ENTRY rml_status rmlSetNumD3DCommandLists(rml_context context,
                                                   unsigned int num_command_lists);
 
-/**
- * Copies image content.
- *
- * @param[in] src A valid source tensor handle.
- * @param[in] dst A valid destination tensor handle.
- *
- * @return Status:
- * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p src or @p dst is invalid.
- *
- * To get more details in case of failure, call rmlGetLastError().
- */
-RML_API_ENTRY rml_status rmlCopyTensor(rml_tensor src, rml_tensor dst);
-
 #ifdef __cplusplus
 } // extern "C"
 #endif

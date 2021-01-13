@@ -35,7 +35,7 @@ namespace rml {
 
 inline void SetDMLFloat16Allowed(const Context& context, rml_bool flag)
 {
-    RML_CHECK_STATUS(rmlSetDMLFloat16Allowed(context, flag));
+    RML_CHECK_STATUS(rmlSetDMLFloat16Allowed(context(), flag));
 }
 
 } // namespace rml

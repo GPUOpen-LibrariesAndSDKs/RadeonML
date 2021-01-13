@@ -48,8 +48,6 @@ inline size_t GetLayoutNumDims(rml_layout layout)
         {RML_LAYOUT_NHWC, 4},
         {RML_LAYOUT_HWIO, 4},
         {RML_LAYOUT_OIHW, 4},
-        {RML_LAYOUT_NCDHW, 5},
-        {RML_LAYOUT_NDHWC, 5},
     };
 
     auto i = kLayoutToDims.find(layout);
@@ -58,6 +56,26 @@ inline size_t GetLayoutNumDims(rml_layout layout)
 }
 
 } // namespace rml
+
+inline std::ostream& operator<<(std::ostream& lhs, rml_bool rhs)
+{
+    switch (rhs)
+    {
+    case RML_FALSE:
+        lhs << "RML_FALSE";
+        break;
+
+    case RML_TRUE:
+        lhs << "RML_TRUE";
+        break;
+
+    default:
+        lhs << "RML_TRUE(" << static_cast<int>(rhs) << ")";
+        break;
+    }
+
+    return lhs;
+}
 
 inline std::ostream& operator<<(std::ostream& lhs, rml_dtype rhs)
 {
@@ -69,6 +87,10 @@ inline std::ostream& operator<<(std::ostream& lhs, rml_dtype rhs)
 
     case RML_DTYPE_FLOAT16:
         lhs << "float16";
+        break;
+
+    case RML_DTYPE_UINT8:
+        lhs << "uint8";
         break;
 
     case RML_DTYPE_INT32:
@@ -95,13 +117,53 @@ inline std::ostream& operator<<(std::ostream& lhs, rml_layout rhs)
         {RML_LAYOUT_HWC, "HWC"},
         {RML_LAYOUT_NHWC, "NHWC"},
         {RML_LAYOUT_NCHW, "NCHW"},
-        {RML_LAYOUT_NDHWC, "NDHWC"},
-        {RML_LAYOUT_NCDHW, "NCDHW"},
         {RML_LAYOUT_OIHW, "OIHW"},
         {RML_LAYOUT_HWIO, "HWIO"},
     };
 
     if (auto iter = kLayoutToString.find(rhs); iter != kLayoutToString.end())
+    {
+        lhs << iter->second;
+    }
+    else
+    {
+        lhs << "Unknown(" << static_cast<int>(rhs) << ")";
+    }
+    return lhs;
+}
+
+inline std::ostream& operator<<(std::ostream& lhs, rml_access_mode rhs)
+{
+    static const std::unordered_map<rml_access_mode, std::string> kModeToString = {
+        {RML_ACCESS_MODE_UNSPECIFIED, "Undefined"},
+        {RML_ACCESS_MODE_READ_ONLY, "ReadOnly"},
+        {RML_ACCESS_MODE_READ_WRITE, "ReadWrite"},
+        {RML_ACCESS_MODE_WRITE_ONLY, "WriteOnly"},
+        {RML_ACCESS_MODE_DEVICE_ONLY, "DeviceOnly"},
+    };
+
+    if (auto iter = kModeToString.find(rhs); iter != kModeToString.end())
+    {
+        lhs << iter->second;
+    }
+    else
+    {
+        lhs << "Unknown(" << static_cast<int>(rhs) << ")";
+    }
+    return lhs;
+}
+
+inline std::ostream& operator<<(std::ostream& lhs, rml_graph_format rhs)
+{
+    static const std::unordered_map<rml_graph_format, std::string> kFormatToString = {
+        {RML_GRAPH_FORMAT_UNSPECIFIED, "Undefined"},
+        {RML_GRAPH_FORMAT_TF, "tf-buffer"},
+        {RML_GRAPH_FORMAT_TF_TXT, "tf-text"},
+        {RML_GRAPH_FORMAT_ONNX, "onnx-buffer"},
+        {RML_GRAPH_FORMAT_ONNX_TXT, "onnx-text"},
+    };
+
+    if (auto iter = kFormatToString.find(rhs); iter != kFormatToString.end())
     {
         lhs << iter->second;
     }

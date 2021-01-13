@@ -26,14 +26,14 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 
-#define RML_CHECK(STATUS)                          \
-    do                                             \
-    {                                              \
-        if (STATUS != RML_OK)                      \
-        {                                          \
-            printf("%s\n", rmlGetLastError(NULL)); \
-            exit(EXIT_FAILURE);                    \
-        }                                          \
+#define RML_CHECK(STATUS)                      \
+    do                                         \
+    {                                          \
+        if (STATUS != RML_OK)                  \
+        {                                      \
+            printf("%s\n", rmlGetLastError()); \
+            exit(EXIT_FAILURE);                \
+        }                                      \
     } while (0)
 
 #define CHECK(STATUS)           \
@@ -68,7 +68,7 @@ void* ReadInput(const char* input_file)
     CHECK(buffer != NULL);
     size_t num_read = fread(buffer, sizeof(char), length, file);
     CHECK(num_read == length);
-    printf("Input data size: %d\n", num_read);
+    printf("Input data size: %zu\n", num_read);
 
     fclose(file);
     return buffer;
@@ -89,7 +89,7 @@ void WriteOutput(const char* output_file, const void* output, const size_t count
 
     size_t count_written = fwrite(output, sizeof(char), count, file);
     CHECK(count_written == count);
-    printf("Output data size: %d\n", count_written);
+    printf("Output data size: %zu\n", count_written);
 
     fclose(file);
 }
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 {
     // Create a context
     rml_context context = NULL;
-    RML_CHECK(rmlCreateDefaultContext(&context));
+    RML_CHECK(rmlCreateDefaultContext(NULL, &context));
 
     // Set model parameters
 #if defined(_WIN32)
@@ -114,19 +114,18 @@ int main(int argc, char* argv[])
     const char* output_file = "path/output";
 
     // Load model
+    rml_graph graph = NULL;
+    RML_CHECK(rmlLoadGraphFromFile(model_path, &graph));
     rml_model model = NULL;
-    RML_CHECK(rmlLoadModel(context, model_path, &model));
+    RML_CHECK(rmlCreateModelFromGraph(context, graph, &model));
 
     // Get initial input tensor information
-    size_t num_inputs = 0;
-    RML_CHECK(rmlGetModelNumInputs(model, &num_inputs));
-    CHECK(num_inputs == MAX_INPUTS);
-
-    const char* input_names[MAX_INPUTS];
-    RML_CHECK(rmlGetModelInputNames(model, num_inputs, input_names));
+    rml_strings input_names;
+    RML_CHECK(rmlGetGraphInputNames(graph, &input_names));
+    CHECK(input_names.num_items == MAX_INPUTS);
 
     rml_tensor_info input_info;
-    RML_CHECK(rmlGetModelInputInfo(model, input_names[0], &input_info));
+    RML_CHECK(rmlGetModelInputInfo(model, input_names.items[0], &input_info));
     CHECK(input_info.layout == RML_LAYOUT_NHWC || input_info.layout == RML_LAYOUT_NCHW);
 
     // Set unspecified input tensor dimensions if required
@@ -142,7 +141,7 @@ int main(int argc, char* argv[])
         input_info.shape[2] = 600;
         input_info.shape[3] = 800;
     }
-    RML_CHECK(rmlSetModelInputInfo(model, input_names[0], &input_info));
+    RML_CHECK(rmlSetModelInputInfo(model, input_names.items[0], &input_info));
 
     // Prepare model for inference
     RML_CHECK(rmlPrepareModel(model));
@@ -165,7 +164,7 @@ int main(int argc, char* argv[])
     RML_CHECK(rmlUnmapTensor(input_tensor, data));
 
     // Set model input
-    RML_CHECK(rmlSetModelInput(model, input_names[0], input_tensor));
+    RML_CHECK(rmlSetModelInput(model, input_names.items[0], input_tensor));
 
     // Get output tensor information
     rml_tensor_info output_info;

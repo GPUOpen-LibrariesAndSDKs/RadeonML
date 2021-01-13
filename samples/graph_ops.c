@@ -28,14 +28,14 @@ THE SOFTWARE.
 #include <stdlib.h>
 #include <string.h>
 
-#define RML_CHECK(STATUS)                          \
-    do                                             \
-    {                                              \
-        if (STATUS != RML_OK)                      \
-        {                                          \
-            printf("%s\n", rmlGetLastError(NULL)); \
-            exit(EXIT_FAILURE);                    \
-        }                                          \
+#define RML_CHECK(STATUS)                      \
+    do                                         \
+    {                                          \
+        if (STATUS != RML_OK)                  \
+        {                                      \
+            printf("%s\n", rmlGetLastError()); \
+            exit(EXIT_FAILURE);                \
+        }                                      \
     } while (0)
 
 #define CHECK(STATUS)           \
@@ -179,11 +179,22 @@ rml_graph ConnectPreprocessingGraph(const rml_graph graph,
     rml_op op_concat = NULL;
     RML_CHECK(rmlCreateOperation(preprocess_graph, &concat_desc, &op_concat));
 
+    // Get tail graph inputs
+    rml_strings tail_inputs;
+    RML_CHECK(rmlGetGraphInputNames(graph, &tail_inputs));
+
+    // Get head graph outputs
+    rml_strings head_outputs;
+    RML_CHECK(rmlGetGraphOutputNames(preprocess_graph, &head_outputs));
+
     // Connect preprocessing graph with base graph
-    const char* graph_inputs[1];
-    RML_CHECK(rmlGetGraphInputNames(graph, 1, graph_inputs));
     rml_graph connected_graph = NULL;
-    RML_CHECK(rmlConnectGraphs(preprocess_graph, graph, graph_inputs[0], &connected_graph));
+    RML_CHECK(rmlConnectGraphs(preprocess_graph,
+                               graph,
+                               1,
+                               &head_outputs.items[0],
+                               &tail_inputs.items[0],
+                               &connected_graph));
 
     return connected_graph;
 }
@@ -222,11 +233,22 @@ rml_graph ConnectPostprocessingGraph(rml_graph graph,
     // Create pow operation
     rml_op pow_op = CreateBinaryOp(postprocess_graph, "pow", RML_OP_POW, clip_op, gamma_op);
 
+    // Get tail graph inputs
+    rml_strings tail_inputs;
+    RML_CHECK(rmlGetGraphInputNames(postprocess_graph, &tail_inputs));
+
+    // Get head graph outputs
+    rml_strings head_outputs;
+    RML_CHECK(rmlGetGraphOutputNames(graph, &head_outputs));
+
     // Connect base graph with postprocessing graph
-    const char* graph_inputs[1];
-    RML_CHECK(rmlGetGraphInputNames(postprocess_graph, 1, graph_inputs) == RML_OK);
     rml_graph connected_graph = NULL;
-    RML_CHECK(rmlConnectGraphs(graph, postprocess_graph, graph_inputs[0], &connected_graph));
+    RML_CHECK(rmlConnectGraphs(graph,
+                               postprocess_graph,
+                               1,
+                               &head_outputs.items[0],
+                               &tail_inputs.items[0],
+                               &connected_graph));
     return connected_graph;
 }
 
@@ -251,7 +273,7 @@ void* ReadInput(const char* input_file)
     CHECK(buffer != NULL);
     size_t num_read = fread(buffer, sizeof(char), length, file);
     CHECK(num_read == length);
-    printf("Input data size: %d\n", num_read);
+    printf("Input data size: %zu\n", num_read);
 
     fclose(file);
     return buffer;
@@ -272,7 +294,7 @@ void WriteOutput(const char* output_file, const void* output, const size_t count
 
     size_t count_written = fwrite(output, sizeof(char), count, file);
     CHECK(count_written == count);
-    printf("Output data size: %d\n", count_written);
+    printf("Output data size: %zu\n", count_written);
 
     fclose(file);
 }
@@ -313,7 +335,7 @@ int main()
 
     // Create a context
     rml_context context = NULL;
-    RML_CHECK(rmlCreateDefaultContext(&context));
+    RML_CHECK(rmlCreateDefaultContext(NULL, &context));
 
     // Load model as a mutable graph
     // model input - 9-channel 800x600 image (3-channel ldr-color,
@@ -322,7 +344,7 @@ int main()
     //                                        2-channel normal)
     // model output - 3-channel 800x600 ldr image
     rml_graph graph = NULL;
-    RML_CHECK(rmlLoadGraph(model_path, &graph));
+    RML_CHECK(rmlLoadGraphFromFile(model_path, &graph));
 
     // Add preprocessing of base model inputs
     // Before we can use ldr-denoiser for hdr-data, we should adjust hdr-color
@@ -349,9 +371,6 @@ int main()
     {
         RML_CHECK(rmlSetModelInputInfo(model, input_names[i], &input_infos[i]));
     }
-
-    // Allocate all required memory and prepare model for inference
-    RML_CHECK(rmlPrepareModel(model));
 
     // Check memory info
     rml_memory_info memory_info;

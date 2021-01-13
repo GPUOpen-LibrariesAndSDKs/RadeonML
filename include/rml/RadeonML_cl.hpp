@@ -46,14 +46,14 @@ inline Tensor CreateTensorFromClBuffer(const Context& context,
                                        rml_access_mode mode)
 {
     rml_tensor tensor = nullptr;
-    RML_CHECK_STATUS(rmlCreateTensorFromClBuffer(context, buffer, &info, mode, &tensor));
+    RML_CHECK_STATUS(rmlCreateTensorFromClBuffer(context(), buffer, &info, mode, &tensor));
     return Tensor(tensor);
 }
 
 inline void* GetClBufferFromTensor(const Tensor& tensor)
 {
     void* buffer = nullptr;
-    RML_CHECK_STATUS(rmlGetClBufferFromTensor(tensor, &buffer));
+    RML_CHECK_STATUS(rmlGetClBufferFromTensor(tensor(), &buffer));
     return buffer /* cl_mem */;
 }
 

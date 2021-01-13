@@ -152,10 +152,14 @@ rml::Graph ConnectPreprocessingGraph(const rml::Graph& graph,
     concat_desc.concat = {inputs.size(), inputs.data(), axis_op};
     preprocess_graph.CreateOperation(concat_desc);
 
+    // Get tail graph inputs
+    std::vector<const char*> tail_inputs = graph.GetInputNames();
+
+    // Get head graph outputs
+    std::vector<const char*> head_outputs = preprocess_graph.GetOutputNames();
+
     // Connect preprocessing graph with base graph
-    std::vector<const char*> graph_inputs;
-    graph.GetInputNames(graph_inputs);
-    return rml::ConnectGraphs(preprocess_graph, graph, graph_inputs.at(0));
+    return rml::ConnectGraphs(preprocess_graph, graph, 1, &head_outputs[0], &tail_inputs[0]);
 }
 
 /*
@@ -189,10 +193,14 @@ rml::Graph ConnectPostprocessingGraph(rml::Graph& graph,
     // Create pow operation
     CreateBinaryOp(postprocess_graph, "pow", RML_OP_POW, clip_op, gamma_op);
 
+    // Get tail graph inputs
+    std::vector<const char*> tail_inputs = postprocess_graph.GetInputNames();
+
+    // Get head graph outputs
+    std::vector<const char*> head_outputs = graph.GetOutputNames();
+
     // Connect base graph with postprocessing graph
-    std::vector<const char*> graph_inputs;
-    postprocess_graph.GetInputNames(graph_inputs);
-    return rml::ConnectGraphs(graph, postprocess_graph, graph_inputs.at(0));
+    return rml::ConnectGraphs(graph, postprocess_graph, 1, &head_outputs[0], &tail_inputs[0]);
 }
 
 /*
@@ -311,7 +319,7 @@ int main() try
     // model output - 3-channel 800x600 ldr image
     // The handles are released automatically upon scope exit
     rml::Graph graph =
-        rml::LoadGraph(std::basic_string<rml_char>(model_path.begin(), model_path.end()));
+        rml::LoadGraphFromFile(std::basic_string<rml_char>(model_path.begin(), model_path.end()));
 
     // Add preprocessing of base model inputs
     // Before we can use ldr-denoiser for hdr-data, we should adjust hdr-color
@@ -338,9 +346,6 @@ int main() try
         std::cout << "Input" << i << ": " << input_info << std::endl;
         model.SetInputInfo(input_names[i], input_info);
     }
-
-    // Allocate all required memory and prepare model for inference
-    model.Prepare();
 
     // Check memory info
     rml_memory_info memory_info = model.GetMemoryInfo();

@@ -58,6 +58,11 @@ extern "C" {
 typedef struct _rml_context* rml_context;
 
 /**
+ * @brief A graph handle.
+ */
+typedef struct _rml_graph* rml_graph;
+
+/**
  * @brief A model handle.
  */
 typedef struct _rml_model* rml_model;
@@ -69,13 +74,23 @@ typedef struct _rml_tensor* rml_tensor;
 
 /**
  * @brief An Unicode character.
- * UTF-8 encoding is used for Linux and OSX and UTF-16 is used for Windows.
+ * UTF-8 encoding is used for Linux and MacOS and UTF-16 is used for Windows.
  */
 #if defined(_WIN32)
 typedef wchar_t rml_char;
 #else
 typedef char rml_char;
 #endif
+
+/**
+ * @brief A storage for multiple strings.
+ */
+typedef struct _rml_strings
+{
+    size_t num_items;
+    const char* const* items;
+
+} rml_strings;
 
 /**
  * @brief A boolean value.
@@ -92,18 +107,16 @@ typedef enum _rml_bool
  */
 typedef enum _rml_status
 {
-    RML_OK = 0,                       /**< Operation is successful. */
-    RML_ERROR_BAD_DTYPE = -100,       /**< The data type of an operation is incorrect. */
-    RML_ERROR_BAD_LAYOUT = -110,      /**< An inconsistent operation input layout. */
-    RML_ERROR_BAD_MODEL_FILE = -120,  /**< A model file has errors. */
-    RML_ERROR_BAD_NAME = -130,        /**< A node name is incorrect. */
-    RML_ERROR_BAD_PARAMETER = -140,   /**< A parameter is incorrect. */
-    RML_ERROR_BAD_SHAPE = -150,       /**< An inconsistent tensor shape. */
-    RML_ERROR_FILE_NOT_FOUND = -160,  /**< A model file does not exist. */
-    RML_ERROR_INTERNAL = -170,        /**< An internal library error. */
-    RML_ERROR_MODEL_NOT_READY = -180, /**< A model is not ready for an operation. */
-    RML_ERROR_NOT_IMPLEMENTED = -190, /**< Functionality is not implemented yet. */
-    RML_ERROR_OUT_OF_MEMORY = -200,   /**< Memory allocation is failed. */
+    RML_OK = 0,                        /**< Operation is successful. */
+    RML_ERROR_BAD_MODEL = -100,        /**< A model file has errors. */
+    RML_ERROR_BAD_PARAMETER = -110,    /**< A parameter is incorrect. */
+    RML_ERROR_DEVICE_NOT_FOUND = -120, /**< A device was not found. */
+    RML_ERROR_FILE_NOT_FOUND = -130,   /**< A model file does not exist. */
+    RML_ERROR_INTERNAL = -140,         /**< An internal library error. */
+    RML_ERROR_MODEL_NOT_READY = -150,  /**< A model is not ready for an operation. */
+    RML_ERROR_NOT_IMPLEMENTED = -160,  /**< Functionality is not implemented yet. */
+    RML_ERROR_OUT_OF_MEMORY = -170,    /**< Memory allocation is failed. */
+    RML_ERROR_UNSUPPORTED_DATA = -180, /**< An unsupported scenario. */
 
 } rml_status;
 
@@ -113,16 +126,17 @@ typedef enum _rml_status
 typedef enum _rml_dtype
 {
     RML_DTYPE_UNSPECIFIED = 0, /**< Unspecified data type. */
-    RML_DTYPE_FLOAT16 = 130,   /**< Full precision float type. */
-    RML_DTYPE_FLOAT32 = 135,   /**< Half precision float type. */
-    RML_DTYPE_INT32 = 145,     /**< Signed 32-bit integer type. */
+    RML_DTYPE_FLOAT32 = 100,   /**< Full precision float type. */
+    RML_DTYPE_FLOAT16 = 101,   /**< Half precision float type. */
+    RML_DTYPE_UINT8 = 110,     /**< Unsigned 8-bit integer type. Unsupported. */
+    RML_DTYPE_INT32 = 120,     /**< Signed 32-bit integer type. */
 
 } rml_dtype;
 
 /**
  * @brief Physical memory layout of the tensor data.
  */
-typedef enum _rml_data_layout
+typedef enum _rml_layout
 {
     RML_LAYOUT_UNSPECIFIED = 0, /**< Unspecified layout. */
 
@@ -149,24 +163,35 @@ typedef enum _rml_data_layout
     RML_LAYOUT_HWIO = 243, /**< Tensor layout with the following dimensions: height, width, number
                             * of input channels, number of output channels. */
 
-    RML_LAYOUT_NCDHW = 250, /**< Tensor layout with the following dimensions: number of images
-                             * (batch size), number of channels, depth, height, width. */
-    RML_LAYOUT_NDHWC = 251, /**< Tensor layout with the following dimensions:
-                             * number of images (batch size), depth, height, width, number of
-                             * channels. */
 } rml_layout;
 
 /**
  * @brief Tensor access mode.
+ *
+ * Mode indicates abilities to access tensor contents on a CPU.
  */
 typedef enum _rml_access_mode
 {
-    RML_ACCESS_MODE_UNSPECIFIED = 0,  /**< Unspecified access mode. */
-    RML_ACCESS_MODE_READ_ONLY = 300,  /**< Allow reading from a tensor. */
-    RML_ACCESS_MODE_READ_WRITE = 310, /**< Allow reading from and writing to a tensor. */
-    RML_ACCESS_MODE_WRITE_ONLY = 320  /**< Allow writing from a tensor. */
+    RML_ACCESS_MODE_UNSPECIFIED = 0,   /**< Unspecified access mode. */
+    RML_ACCESS_MODE_READ_ONLY = 300,   /**< Allow reading from a tensor. */
+    RML_ACCESS_MODE_READ_WRITE = 310,  /**< Allow reading from and writing to a tensor. */
+    RML_ACCESS_MODE_WRITE_ONLY = 320,  /**< Allow writing from a tensor. */
+    RML_ACCESS_MODE_DEVICE_ONLY = 330, /**< No reading from and writing to a tensor. */
 
 } rml_access_mode;
+
+/**
+ * @brief Defines graph format required for loading model from buffer.
+ */
+typedef enum _rml_graph_format
+{
+    RML_GRAPH_FORMAT_UNSPECIFIED = 0, /**< Unspecified graph format. */
+    RML_GRAPH_FORMAT_TF = 400,        /**< Tensorflow 1.x binary graph format. */
+    RML_GRAPH_FORMAT_TF_TXT = 410,    /**< Tensorflow text graph format. */
+    RML_GRAPH_FORMAT_ONNX = 420,      /**< ONNX binary graph format. */
+    RML_GRAPH_FORMAT_ONNX_TXT = 430,  /**< ONNX text graph format. */
+
+} rml_graph_format;
 
 /**
  * @brief Memory information.
@@ -176,7 +201,7 @@ typedef struct _rml_memory_info
     /**
      * Total amount of allocated GPU memory.
      */
-    size_t gpu_total; 
+    size_t gpu_total;
 
 } rml_memory_info;
 
@@ -205,25 +230,47 @@ typedef struct _rml_tensor_info
 /**
  * @brief Unspecified dimension value (a placeholder value)
  */
-#define RML_DIM_UNSPECIFIED 0
+#define RML_DIM_UNSPECIFIED 0u
+
+/**
+ * @brief Device index for automatic device selection
+ */
+#define RML_DEVICE_IDX_UNSPECIFIED 0u
+
+/**
+ * Context creation parameters.
+ */
+typedef struct _rml_context_params
+{
+    /**
+     * Device index, corresponding to the backend device query result.
+     * Enumeration is started with 1. Use RML_DEVICE_IDX_UNSPECIFIED (0)
+     * for auto device selection.
+     */
+    uint32_t device_idx;
+
+} rml_context_params;
 
 /**
  * Creates a context.
  *
+ * @param[in]  params  Context creation parameters, optional, @see #rml_context_params.
  * @param[out] context A pointer to a resulting context handle.
  *
  * @return A valid context handle in case of success and status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if the @p context is NULL,
+ * - #RML_ERROR_BAD_PARAMETER if the @p params->device_idx is incorrect or the @p context is NULL,
  * - #RML_ERROR_INTERNAL in case of an internal error.
  *
  * To get more details in case of failure, call rmlGetLastError().
  * The context should be released with rmlReleaseContext().
  */
-RML_API_ENTRY rml_status rmlCreateDefaultContext(rml_context* context);
+RML_API_ENTRY rml_status rmlCreateDefaultContext(const rml_context_params* params,
+                                                 rml_context* context);
 
 /**
- * Releases a context created with rmlCreateDefaultContext(), invalidates the handle.
+ * Releases a context created with rmlCreateDefaultContext() or another context creating function,
+ * invalidates the handle.
  *
  * @param[in] context A valid context handle.
  */
@@ -239,10 +286,8 @@ RML_API_ENTRY void rmlReleaseContext(rml_context context);
  *
  * @return A valid tensor handle in case of success and status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p context or @p info is NULL or @p mode has unknown value,
- * - #RML_ERROR_BAD_DTYPE if @p info has unknown @p dtype value,
- * - #RML_ERROR_BAD_LAYOUT if @p info has unknown @p layout value,
- * - #RML_ERROR_BAD_SHAPE if @p info has inconsistent @p shape values,
+ * - #RML_ERROR_BAD_PARAMETER if @p context, @p info or @p mode is invalid or @p tensor is NULL,
+ * - #RML_ERROR_OUT_OF_MEMORY if memory allocation is failed,
  * - #RML_ERROR_INTERNAL in case of an internal error.
  *
  * To get more details in case of failure, call rmlGetLastError().
@@ -306,76 +351,90 @@ RML_API_ENTRY rml_status rmlUnmapTensor(rml_tensor tensor, void* data);
 RML_API_ENTRY void rmlReleaseTensor(rml_tensor tensor);
 
 /**
- * Loads model data from a file.
+ * Load graph from a ptotobuf file.
  *
- * @param[in]  context A valid context handle.
- * @param[in]  path    Path to a model in the TF or ONNX formats, in UTF-8 (Linux, OSX)
- *                     or UTF-16 (Windows) encoding.
- * @param[out] model   A pointer to a resulting model handle.
+ * @param[in]  path  Path to a graph in the TF or ONNX formats.
+ * @param[out] graph The pointer to a resulting graph handle.
  *
- * @return A valid model handle in case of success and status:
+ * @return A valid graph handle in case of success and status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p context is invalid or @p path is NULL or @p model is NULL.
+ * - #RML_ERROR_BAD_PARAMETER if @p path or @p graph is NULL,
+ * - #RML_ERROR_FILE_NOT_FOUND if the model file is not found,
+ * - #RML_ERROR_BAD_MODEL if the model contains an error.
  *
  * To get more details in case of failure, call rmlGetLastError().
- * The model should be released with rmlReleaseModel().
+ * The graph should be released with rmlReleaseGraph().
  */
-RML_API_ENTRY rml_status rmlLoadModel(rml_context context, const rml_char* path, rml_model* model);
+RML_API_ENTRY rml_status rmlLoadGraphFromFile(const rml_char* path, rml_graph* graph);
 
 /**
- * Returns model input node names.
+ * Loads graph from a protobuf buffer.
  *
- * Memory for result name strings belongs to the model, so it must NOT be freed by a client.
+ * @param[in]  size   The buffer size.
+ * @param[in]  buffer The buffer pointer.
+ * @param[in]  format The buffer format.
+ * @param[out] graph  The pointer to a resulting graph handle.
  *
- * @param[in]  model      A valid model handle.
- * @param[in]  num_inputs The number of input (placeholder) nodes.
- * @param[out] names      A string array for resulting input node names, in ASCII encoding.
- *
- * @return Status:
+ * @return A valid graph handle in case of success and status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p num_inputs is invalid or @p names is
- * NULL.
+ * - #RML_ERROR_BAD_PARAMETER if @p buffer or @p graph is NULL.
+ * - #RML_ERROR_BAD_MODEL if the model contains an error.
+ *
+ * To get more details in case of failure, call rmlGetLastError().
+ * The graph should be released with rmlReleaseGraph().
+ */
+RML_API_ENTRY rml_status rmlLoadGraphFromBuffer(size_t size,
+                                                const void* buffer,
+                                                rml_graph_format format,
+                                                rml_graph* graph);
+
+/**
+ * Creates a model from a supplied graph.
+ *
+ * @param[in]  context A valid context handle.
+ * @param[in]  graph   A valid graph handle.
+ * @param[out] model   A pointer to a resulting model handle.
+ *
+ * @return A model handle in case of success and status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p context or @p graph is invalid or @p model is NULL.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
-RML_API_ENTRY rml_status rmlGetModelInputNames(rml_model model,
-                                               size_t num_inputs,
-                                               const char* names[]);
+RML_API_ENTRY rml_status rmlCreateModelFromGraph(rml_context context,
+                                                 rml_graph graph,
+                                                 rml_model* model);
 
 /**
  * Sets up model output node names.
  *
- * If this function is not called, an output node is the last node in a model.
+ * If this function is not called, all leaf graph nodes are considered to be output.
  *
- * @param[in]  model       A valid model handle.
- * @param[in]  num_outputs The number of output nodes.
- * @param[out] names       A string array with output node names, in ASCII encoding.
+ * @param[in]  model A valid model handle.
+ * @param[out] names A pointer to a structure with output names.
  *
  * @return Status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p names is NULL,
- * - #RML_ERROR_BAD_NAME if @p name is not found in the model.
+ * - #RML_ERROR_BAD_PARAMETER if @p model or @p names is invalid.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
-RML_API_ENTRY rml_status rmlSetModelOutputNames(rml_model model,
-                                                size_t num_outputs,
-                                                const char* const names[]);
+RML_API_ENTRY rml_status rmlSetModelOutputNames(rml_model model, const rml_strings* names);
 
 /**
  * Returns input tensor information by a node name.
- * The @p name my be NULL if there is a single input node.
+ *
+ * The @p name my be NULL if there is a single input (placeholder) node.
  *
  * @param[in]  model A valid model handle.
- * @param[in]  name  An input node name, in ASCII encoding.
+ * @param[in]  name  An optional input node name, in ASCII encoding.
  * @param[out] info  A pointer to a resulting input info structure.
  *                   If rmlSetModelInputInfo() was not previously called,
  *                   some dimensions may be unspecified.
  *
  * @return Input tensor information in case of success and status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p name is NULL,
- * - #RML_ERROR_BAD_NAME if on operation with @p name is not found in the model.
+ * - #RML_ERROR_BAD_PARAMETER if @p model or @p name is invalid or @p info is NULL.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
@@ -387,7 +446,7 @@ RML_API_ENTRY rml_status rmlGetModelInputInfo(rml_model model,
  * Sets input tensor information for a node name.
  *
  * This call is optional if all model input dimensions are initially specified.
- * The @p name my be NULL if there is a single input node.
+ * The @p name my be NULL if there is a single input (placeholder) node.
  *
  * @param[in] model A valid model handle.
  * @param[in] name  An input node name, in ASCII encoding.
@@ -395,8 +454,7 @@ RML_API_ENTRY rml_status rmlGetModelInputInfo(rml_model model,
  *
  * @return Status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p name is NULL or info is NULL,
- * - #RML_ERROR_BAD_NAME if a name from @p name is not found in the model.
+ * - #RML_ERROR_BAD_PARAMETER if @p model or @p name is invalid or @p info is NULL.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
@@ -405,39 +463,19 @@ RML_API_ENTRY rml_status rmlSetModelInputInfo(rml_model model,
                                               const rml_tensor_info* info);
 
 /**
- * Prepares a model for inference.
- *
- * All unspecified model input dimensions must be set with rmlSetModelInputInfo()
- * before this function is called.
- *
- * @param[in] model A valid model handle.
- *
- * @return Status:
- * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid,
- * - #RML_ERROR_MODEL_NOT_READY if some inputs have unspecified dimensions,
- * - #RML_ERROR_INTERNAL in case of an internal error.
- *
- * To get more details in case of failure, call rmlGetLastError().
- */
-RML_API_ENTRY rml_status rmlPrepareModel(rml_model model);
-
-/**
  * Returns output tensor information.
  *
+ * All input dimensions must be specified before this call.
  * The @p name my be NULL if there is a single output node.
  *
  * @param[in]  model A valid model handle.
- * @param[in]  name  A nullable output node name, in ASCII encoding.
+ * @param[in]  name  A optional output node name, in ASCII encoding.
  * @param[out] info  A pointer to a resulting output info structure.
- *                   If rmlSetModelInputInfoTensor() was not previously called,
- *                   some dimensions may be unspecified.
  *
  * @return Output tensor information in case of success and status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p name is NULL,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model,
- * - #RML_ERROR_BAD_NAME if on operation with @p name is not found in the model.
+ * - #RML_ERROR_BAD_PARAMETER if @p model or @p name is invalid or @p info is NULL,
+ * - #RML_ERROR_MODEL_NOT_READY if some inputs have unspecified dimensions.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
@@ -446,20 +484,34 @@ RML_API_ENTRY rml_status rmlGetModelOutputInfo(rml_model model,
                                                rml_tensor_info* info);
 
 /**
+ * Returns memory usage information.
+ *
+ * All input dimensions must be specified before this call.
+ *
+ * @param[in]  model A valid model handle.
+ * @param[out] info  A pointer to a resulting #rml_memory_info structure.
+ *
+ * @return Status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p info is NULL,
+ * - #RML_ERROR_MODEL_NOT_READY if some inputs have unspecified dimensions.
+ */
+RML_API_ENTRY rml_status rmlGetModelMemoryInfo(rml_model model, rml_memory_info* info);
+
+/**
  * Sets up an input tensor for a node with a specified name.
  *
- * The model must be prepared with rmlPrepareModel() before this call.
+ * All input dimensions must be specified before this call.
  * The @p name my be NULL if there is a single input (placeholder) node.
  *
  * @param[in] model A valid model handle.
- * @param[in] name  A nullable input node name, in ASCII encoding.
+ * @param[in] name  A optional input node name, in ASCII encoding.
  * @param[in] input A valid input tensor handle.
  *
  * @return Status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p name is NULL or @p input is invalid,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model,
- * - #RML_ERROR_BAD_NAME if on operation with @p name is not found in the model.
+ * - #RML_ERROR_BAD_PARAMETER if @p model, @p name or @p input is invalid,
+ * - #RML_ERROR_MODEL_NOT_READY if some inputs have unspecified dimensions.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
@@ -468,27 +520,26 @@ RML_API_ENTRY rml_status rmlSetModelInput(rml_model model, const char* name, rml
 /**
  * Sets up an input tensor for a node with a specified name.
  *
- * The model must be prepared with rmlPrepareModel() before this call.
+ * All input dimensions must be specified before this call.
  * The @p name my be NULL if there is a single output node.
  *
  * @param[in] model  A valid model handle.
- * @param[in] name   An output node name nullable.
+ * @param[in] name   An optional output node name, in ASCII encoding.
  * @param[in] output A valid output tensor handle.
  *
  * @return Status:
  * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p name is NULL or @p output is invalid,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model,
- * - #RML_ERROR_BAD_NAME if on operation with @p name is not found in the model.
+ * - #RML_ERROR_BAD_PARAMETER if @p model, @p name or @p output is invalid,
+ * - #RML_ERROR_MODEL_NOT_READY if some inputs have unspecified dimensions.
  *
  * To get more details in case of failure, call rmlGetLastError().
  */
 RML_API_ENTRY rml_status rmlSetModelOutput(rml_model model, const char* name, rml_tensor output);
 
 /**
- * Runs inference.
+ * Prepares a model for inference.
  *
- * All model inputs must be set with rmlSetModelInput() and all model ouputs
+ * All model inputs must be set with rmlSetModelInput() and all model outputs
  * must be set with rmlSetModelOutput() before this function is called.
  *
  * @param[in] model A valid model handle.
@@ -496,8 +547,27 @@ RML_API_ENTRY rml_status rmlSetModelOutput(rml_model model, const char* name, rm
  * @return Status:
  * - #RML_OK if the operation is successful,
  * - #RML_ERROR_BAD_PARAMETER if @p model is invalid,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() or required rmlSetModelInput()
- *                              and/or rmlSetModelOutput() was not called on the model,
+ * - #RML_ERROR_MODEL_NOT_READY if any input or output tensor is not specified,
+ * - #RML_ERROR_OUT_OF_MEMORY if memory allocation is failed,
+ * - #RML_ERROR_INTERNAL in case of an internal error.
+ *
+ * To get more details in case of failure, call rmlGetLastError().
+ */
+RML_API_ENTRY rml_status rmlPrepareModel(rml_model model);
+
+/**
+ * Runs inference.
+ *
+ * All model inputs must be set with rmlSetModelInput() and all model outputs
+ * must be set with rmlSetModelOutput() before this function is called.
+ *
+ * @param[in] model A valid model handle.
+ *
+ * @return Status:
+ * - #RML_OK if the operation is successful,
+ * - #RML_ERROR_BAD_PARAMETER if @p model is invalid,
+ * - #RML_ERROR_MODEL_NOT_READY if any input or output tensor is not specified,
+ * - #RML_ERROR_OUT_OF_MEMORY if memory allocation is failed,
  * - #RML_ERROR_INTERNAL in case of an internal error.
  *
  * To get more details in case of failure, call rmlGetLastError().
@@ -507,14 +577,15 @@ RML_API_ENTRY rml_status rmlInfer(rml_model model);
 /**
  * Resets internal model states to their initial values.
  *
- * All model must be prepared with rmlPrepare() before this function is called.
+ * All model inputs must be set with rmlSetModelInput() and all model outputs
+ * must be set with rmlSetModelOutput() before this function is called.
  *
  * @param[in] model A valid model handle.
  *
  * @return Status:
  * - #RML_OK if the operation is successful,
  * - #RML_ERROR_BAD_PARAMETER if @p model is invalid,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model,
+ * - #RML_ERROR_MODEL_NOT_READY if any input or output tensor is not specified,
  * - #RML_ERROR_INTERNAL in case of an internal error.
  *
  * To get more details in case of failure, call rmlGetLastError().
@@ -522,8 +593,7 @@ RML_API_ENTRY rml_status rmlInfer(rml_model model);
 RML_API_ENTRY rml_status rmlResetModelStates(rml_model model);
 
 /**
- * Releases a model loaded with rmlLoadModel() or created with rmlCreateModelFromGraph(), 
- * invalidates the handle.
+ * Releases a model created with rmlCreateModelFromGraph(), invalidates the handle.
  *
  * @param[in] model A valid model handle.
  */
@@ -531,16 +601,14 @@ RML_API_ENTRY void rmlReleaseModel(rml_model model);
 
 /**
  * Returns a null-terminated string containing the last operation error message.
- * May be called after some operation returns NULL or a status different fror #RML_OK.
+ * May be called after some operation returns a status other than #RML_OK.
  * The error message is owned by the library and must NOT be freed by a client.
  * The message is stored in a thread local storage, so this function
  * should be called from the thread where the failure occured.
  *
- * @param[out] size Optional, the size of the error message (excluding the null-terminator).
- *
  * @return A pointer to the formatted message, in ASCII-encoding.
  */
-RML_API_ENTRY const char* rmlGetLastError(size_t* size);
+RML_API_ENTRY const char* rmlGetLastError();
 
 /**
  * Set whether logging is enabled.
@@ -548,33 +616,6 @@ RML_API_ENTRY const char* rmlGetLastError(size_t* size);
  * @param[in] enabled Whether logging is enabled. Logging is enabled by default.
  */
 RML_API_ENTRY void rmlSetLoggingEnabled(rml_bool enabled);
-
-/**
- * Returns memory usage information.
- *
- * The model must be prepared for inference with rmlPrepareModel() before this call.
- *
- * @param[in]  model A valid model handle.
- * @param[out] info  A pointer to a resulting #rml_memory_info structure.
- *
- * @return Status:
- * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p info is NULL,
- * - #RML_ERROR_MODEL_NOT_READY if rmlPrepareModel() was not called on the model.
- */
-RML_API_ENTRY rml_status rmlGetModelMemoryInfo(rml_model model, rml_memory_info* info);
-
-/**
- * Returns the number of input nodes (placeholders) in the model.
- *
- * @param[in]  model  A valid model handle.
- * @param[out] num_inputs A pointer to a resulting value.
- *
- * @return Status:
- * - #RML_OK if the operation is successful,
- * - #RML_ERROR_BAD_PARAMETER if @p model is invalid or @p num_inputs is NULL.
- */
-RML_API_ENTRY rml_status rmlGetModelNumInputs(rml_model model, size_t* num_inputs);
 
 #ifdef __cplusplus
 } // extern "C"
